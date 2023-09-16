@@ -18,7 +18,7 @@
                             <label class="form-label">
                                 {{form.paciente.label|upper}}
                                 <a href="{% url 'pacientes:agregar' %}?prev={{request.path}}" type="submit">
-                                    <i class="fas fa-user-plus ml-3 text-success"></i>
+                                    <i class="fas fa-user-plus ml-3 text-warning"></i>
                                 </a>
                             </label>
                             {{form.paciente|attr:"autofocus:on"|attr:'autocomplete:off'|add_class:'form-control rounded-pill'}}

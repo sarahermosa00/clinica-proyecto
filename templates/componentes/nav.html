@@ -67,7 +67,7 @@
         <li class="nav-item my-2">
           <div class="dropdown">
             <button class="btn btn-transparent dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-              <span class="border-bottom border-verde border-3">Reportes</span>
+              <span class="border-bottom border-warning border-3">Reportes</span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <li><a class="dropdown-item" href="{% url 'reportes:pacientes' %}">Pacientes</a></li>
@@ -81,7 +81,7 @@
       <div class="ml-auto">
         {% if user.is_authenticated %}
           <div class="nav-link">
-            <i class="fas fa-circle text-verde mr-2"></i>
+            <i class="fas fa-circle text-warning mr-2"></i>
             {{ user.username|upper }} | {{ date }}
           </div>
         {% endif %}

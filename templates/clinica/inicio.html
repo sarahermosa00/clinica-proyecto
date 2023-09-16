@@ -27,23 +27,23 @@
     </a>
   </div>
 
-  <div class="d-flex align-items-center justify-content-center text-center p-3 mb-3 text-white bg-primary bg-gradient">
+  <div class="d-flex align-items-center justify-content-center text-center p-3 mb-3 text-white bg-success bg-gradient bg-opacity-25">
     <img class="mr-3" src="{% static 'img/logo.svg' %}" alt="doctor" width="70" height="70">
     <div class="lh-1">
-      <h1 class="h3 mb-1 text-white lh-1 py-1 border-top border-verde border-2">Sistema de Gestión Clínica</h1>
+      <h1 class="h3 mb-1 text-dark lh-1 py-1 border-top border-dark border-2">Sistema de Gestión Clínica</h1>
       <small class="lead">
         {% if user.is_authenticated %}
-        <a href="{% url 'productos:lista' %}" style="text-decoration: none;" class="text-success">
+        <a href="{% url 'productos:lista' %}" style="text-decoration: none;" class="text-info">
         Entrar
         </a>
         {% else %}
-        <a href="{% url 'usuarios:entrar' %}" style="text-decoration: none;" class="text-success">
+        <a href="{% url 'usuarios:entrar' %}" style="text-decoration: none;" class="text-info">
         Iniciar Sesión
         </a>
         {% endif %}
       </small>
     </div>
-    <img class="ml-3" src="{% static 'img/saludable.svg' %}" alt="doctor" width="70" height="70">
+    <img class="ml-3" src="{% static 'img/right-inicio.svg' %}" alt="doctor" width="70" height="70">
     </div>
 
   <hr class="featurette-divider">
