@@ -13,7 +13,7 @@ class Paciente(ModeloBase):
     nombre = models.CharField(max_length=25, verbose_name="Nombre")
     apellido = models.CharField(max_length=25, verbose_name="Apellido")
     edad = models.PositiveIntegerField(verbose_name="Edad")
-    dni = models.CharField(max_length=11, unique=True, verbose_name="Documento")
+    documento = models.CharField(max_length=11, unique=True, verbose_name="documento")
     email = models.EmailField(blank=True, null=True, verbose_name="Correo")
     medico = models.ForeignKey(
         Usuario, 

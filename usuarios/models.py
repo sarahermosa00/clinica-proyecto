@@ -16,7 +16,7 @@ ROL_OPCIONES = (
 class Usuario(AbstractUser):
     imagen = models.ImageField(upload_to='usuarios/img', blank=True, null=True, verbose_name="Imagen")
     rol = models.CharField(max_length=1, default='S', choices=ROL_OPCIONES, verbose_name="Sector")
-    dni = models.CharField(max_length=11, verbose_name="Documento")
+    documento = models.CharField(max_length=11, verbose_name="documento")
     nombre = models.CharField(max_length=25, verbose_name="Nombre")
     apellido = models.CharField(max_length=25, verbose_name="Apellido")
     ultima_actividad = models.DateTimeField(verbose_name="Última actividad", blank=True, null=True)
@@ -45,8 +45,8 @@ class Actividad(models.Model):
 def registrarActividad(request, mensaje):
     u_username = request.user.username
     u_nombre = f'{request.user.nombre} {request.user.apellido}'
-    u_dni = request.user.dni
-    usuario_actual = f'{u_username}, {u_nombre}, {u_dni}'
+    u_documento = request.user.documento
+    usuario_actual = f'{u_username}, {u_nombre}, {u_documento}'
     accion_actual = mensaje
     Actividad.objects.create(accion=accion_actual, usuario=usuario_actual, momento=timezone.now())
     usuario_actual = Usuario.objects.get(id=request.user.id)

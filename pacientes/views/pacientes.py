@@ -41,7 +41,7 @@ class Listar(LoginRequiredMixin, generic.ListView):
                     Q(nombre__in=b_query.split()) | Q(apellido__in=b_query.split()) |
                     Q(nombre__icontains=b_query.split()[0])  |
                     Q(apellido__icontains=b_query.split()[0])|
-                    Q(dni__contains=b_query)
+                    Q(documento__contains=b_query)
                 ).filter(medico=self.request.user.id)
             else:
                 return Paciente.objects.filter(medico=self.request.user.id)            
@@ -63,7 +63,7 @@ class Listar(LoginRequiredMixin, generic.ListView):
                 Q(nombre__in=b_query.split()) | Q(apellido__in=b_query.split()) |
                 Q(nombre__icontains=b_query.split()[0])  |
                 Q(apellido__icontains=b_query.split()[0])|
-                Q(dni__contains=b_query)  
+                Q(documento__contains=b_query)  
             )
         else:
             return Paciente.objects.all()
@@ -71,7 +71,7 @@ class Listar(LoginRequiredMixin, generic.ListView):
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
         contexto['titulo'] = 'Lista de pacientes'
-        contexto['buscar'] = 'Ingresa el nombre de algún paciente o el DNI'
+        contexto['buscar'] = 'Ingresa el nombre de algún paciente o el numero de CI'
         contexto['cantidad'] = Paciente.objects.count()
         return contexto
 
