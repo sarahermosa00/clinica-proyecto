@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
                 ('imagen', models.ImageField(blank=True, null=True, upload_to='usuarios/img', verbose_name='Imagen')),
                 ('rol', models.CharField(choices=[('M', 'Medico'), ('S', 'Secretaria'), ('G', 'Gerencia'), ('V', 'Venta'), ('T', 'Taller')], default='S', max_length=1, verbose_name='Sector')),
-                ('dni', models.CharField(max_length=11, verbose_name='Documento')),
+                ('documento', models.CharField(max_length=11, verbose_name='documento')),
                 ('nombre', models.CharField(max_length=25, verbose_name='Nombre')),
                 ('apellido', models.CharField(max_length=25, verbose_name='Apellido')),
                 ('ultima_actividad', models.DateTimeField(blank=True, null=True, verbose_name='Última actividad')),

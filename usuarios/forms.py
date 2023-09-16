@@ -9,5 +9,5 @@ class FormularioUsuario(UserCreationForm):
     class Meta:
         model = Usuario
         fields = (
-            'username', 'password1', 'password2', 'rol', 'nombre', 'apellido', 'imagen', 'email', 'dni'
+            'username', 'password1', 'password2', 'rol', 'nombre', 'apellido', 'imagen', 'email', 'documento'
             )

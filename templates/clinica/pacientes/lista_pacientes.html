@@ -42,7 +42,7 @@
                   <tr>
                     <th>Foto</th>
                     <th>Paciente</th>
-                    <th>DNI</th>
+                    <th>Cedula de Identidad</th>
                     <th></th>
                     <th></th>
                   </tr>
@@ -58,7 +58,7 @@
                         {% endif %}
                       </td>
                       <td>{{paciente.nombre}} {{paciente.apellido}}</td>
-                      <td>{{paciente.dni}}</td>
+                      <td>{{paciente.documento}}</td>
                       <td>
                         <a href="{% url 'pacientes:detalle' paciente.id %}">
                           <i class="fas fa-search text-dark"></i>
