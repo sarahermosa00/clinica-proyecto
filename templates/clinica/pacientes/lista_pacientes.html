@@ -40,7 +40,7 @@
               <table class="table table-hover table-borderless">
                 <thead>
                   <tr>
-                    <th>Foto</th>
+                    <!--th>Foto</th>-->
                     <th>Paciente</th>
                     <th>Cedula de Identidad</th>
                     <th></th>
@@ -50,13 +50,13 @@
                 <tbody>
                   {% for paciente in Pacientes %}
                     <tr>
-                      <td>
+                      <!--td>
                         {% if paciente.imagen %}
                           <img src="{{paciente.imagen.url}}" width="45" height="45" class="img-fluid rounded" alt="foto">
                         {% else%}
                           <img src="{% static 'img/default.svg' %}" width="45" height="45" class="img-fluid" alt="foto">
                         {% endif %}
-                      </td>
+                      </td>-->
                       <td>{{paciente.nombre}} {{paciente.apellido}}</td>
                       <td>{{paciente.documento}}</td>
                       <td>

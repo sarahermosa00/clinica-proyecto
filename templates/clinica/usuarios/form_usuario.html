@@ -4,14 +4,14 @@
 {% block content %}
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="container pt-3">
-            <h1 class="display-5 text-center my-3">{{titulo}}</h1>
-            
+        <div class="container pt-1">
+            <h1 class="display-7 text-center my-3">{{titulo}}</h1>
+
             {% include 'componentes/forms_errors.html' %}
 
             <div class="row">
-                <!-- username -->
-                <div class="col-md-3">
+                <div class="col-md-6">
+                    <!-- username -->
                     <div class="my-3">
                         <label class="form-label">
                             {{form.username.label|upper}}
@@ -19,9 +19,8 @@
                         </label>
                         {{form.username|attr:"autocomplete:off"|attr:"autofocus:on"|add_class:'form-control rounded-pill'}}
                     </div>
-                </div>
-                <!-- password -->
-                <div class="col-md-3">
+
+                    <!-- password1 -->
                     <div class="my-3">
                         <label class="form-label">
                             {{form.password1.label|upper}}
@@ -29,10 +28,8 @@
                         </label>
                         {{form.password1|attr:"type:password"|add_class:'form-control rounded-pill'}}
                     </div>
-                </div>
-        
-                 <!-- password2 -->
-                <div class="col-md-3">
+
+                    <!-- password2 -->
                     <div class="my-3">
                         <label class="form-label">
                             {{form.password2.label|upper}}
@@ -40,19 +37,25 @@
                         </label>
                         {{form.password2|attr:"type:password"|add_class:'form-control rounded-pill'}}
                     </div>
+
+                    <!-- documento -->
+                    <div class="my-3">
+                        <label class="form-label">
+                            {{form.documento.label|upper}}
+                            <span class="text-danger">*</span>
+                        </label>
+                        {{form.documento|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
+                    </div>
                 </div>
 
-                <!-- rol -->
-                <div class="col-md-3">
+                <div class="col-md-6">
+                    <!-- rol -->
                     <div class="my-3">
                         <label class="form-label">{{form.rol.label|upper}}</label>
                         {{form.rol|add_class:'form-control rounded-pill'}}
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <!-- Nombre -->
-                <div class="col-sm-4">
+
+                    <!-- Nombre -->
                     <div class="my-3">
                         <label class="form-label">
                             {{form.nombre.label|upper}}
@@ -60,9 +63,8 @@
                         </label>
                         {{form.nombre|attr:"autocomplete:off"|attr:"autofocus:on"|add_class:'form-control rounded-pill'}}
                     </div>
-                </div>
-                <!-- Apellido -->
-                <div class="col-sm-4">
+
+                    <!-- Apellido -->
                     <div class="my-3">
                         <label class="form-label">
                             {{form.apellido.label|upper}}
@@ -70,42 +72,11 @@
                         </label>
                         {{form.apellido|attr:"autocomplete:off"|attr:"autofocus:on"|add_class:'form-control rounded-pill'}}
                     </div>
-                </div>
-                <!-- Imagen -->
-                <div class="col-sm-4">
-                    {% if object.imagen %}
-                        <div class="my-3">
-                            <label class="form-label">{{form.imagen.label|upper}}</label>
-                            <img src="{{object.imagen.url}}" class="img-fluid" alt="Imagen" height="60" width="60">
-                            {{form.imagen|attr:"type:file"|add_class:'py-3'}}
-                        </div>
-                    {% else %}
-                        <div class="form-file mt-md-5 my-3">
-                            {{form.imagen|attr:"type:file"|add_class:'form-file-input'}}
-                            <label class="form-file-label" for="customFile">
-                                <span class="form-file-text">{{form.imagen.label|upper}}</span>
-                                <span class="form-file-button">Buscar</span>
-                            </label>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
 
-            <div class="row d-flex justify-content-center">
-                <!--  Email -->
-                <div class="col-sm-4">
-                    <div class="my-2">
+                    <!-- Email -->
+                    <div class="my-3">
                         <label class="form-label">{{form.email.label|upper}}</label>
                         {{form.email|attr:"type:email"|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
-                    </div>
-                </div>
-                <div class="col-sm-3">
-                    <div class="my-2">
-                        <label class="form-label">
-                            {{form.documento.label|upper}}
-                            <span class="text-danger">*</span>
-                        </label>
-                        {{form.documento|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
                     </div>
                 </div>
             </div>
