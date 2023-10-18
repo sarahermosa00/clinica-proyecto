@@ -12,7 +12,7 @@
 
                     {% include 'componentes/forms_errors.html' %}
 
-                    <!-- Observacion -->
+                    <!-- Historial Medico -->
                     <div class="row d-flex justify-content-center">
                         <!-- Motivo -->
                         <div class="col-6">
@@ -25,17 +25,44 @@
                         </div>
                     </div>
 
-                    <!-- Descripcion -->
+                    <!-- Especialidad -->
                     <div class="row d-flex justify-content-center">
-                        <div class="col-9">
+                        <div class="col-3">
                             <div class="my-3">
-                                <label class="form-label">{{form.descripcion.label|upper}}</label>
-                                {{form.descripcion|add_class:'form-control rounded'}}
+                                <label class="form-label">{{form.especialidad.label|upper}}
+                                    <!-- Texto de ayuda -->
+                                    <small class="form-text text-muted">{{ form.especialidad.help_text }}</small>
+                                </label>
+                                {{form.especialidad|add_class:'form-control rounded'}}
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Tratamiento -->
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-5">
+                            <div class="my-3">
+                                <label class="form-label">{{form.tratamientos.label|upper}}
+                                    <!-- Texto de ayuda -->
+                                    <small class="form-text text-muted">{{ form.tratamientos.help_text }}</small>
+                                </label>
+                                {{form.tratamientos|add_class:'form-control rounded'}}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Procedimientos -->
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-5">
+                            <div class="my-3">
+                                <label class="form-label">{{form.procedimientos.label|upper}}
+                                    <small class="form-text text-muted">{{ form.procedimientos.help_text }}</small>
+                                </label>
+                                {{form.procedimientos|add_class:'form-control rounded'}}
+                            </div>
+                        </div>
+                    </div>
 
+                    
                     <div class="d-flex justify-content-center">
                         <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example">
                             <a href="{{url_volver}}" type="button" class="btn btn-outline-primary">
@@ -53,7 +80,7 @@
     {% else %}
         <div class="row d-flex justify-content-center">
             <div class="col-8">
-                <h1 class="text-center my-5 lead">No tienes permiso para cargar o modificar observaciones</h1>
+                <h1 class="text-center my-5 lead">No tienes permiso para cargar o modificar el historial de consultas</h1>
             </div>
         </div>
     {% endif %}

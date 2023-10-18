@@ -11,18 +11,40 @@
                 <h1 class="display-5 text-center">{{titulo}}</h1>
                 
                 <div class="row">
-                    <!-- Nombre -->
+                    <!-- Columna 1 -->
                     <div class="col-md-6">
-                        <div class="my-3">
-                        <label class="form-label">
-                            {{form.nombre.label|upper}}
-                            <span class="text-danger">*</span>
-                        </label>
-                        {{form.nombre|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
+                        <!-- Nombre -->
+                        <div class="my-3 mb-3">
+                            <label class="form-label">
+                                {{form.nombre.label|upper}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{form.nombre|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
                         </div>
+                
+                        <!-- Edad -->
+                        <div class="my-3 mb-3">
+                            <label class="form-label">
+                                {{form.edad.label|upper}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{form.edad|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
+                        </div>
+                        
+                        
+                        <!-- Género -->
+                        <div class="my-3 mb-3">
+                            <label class="form-label">{{ form.genero.label|upper }}
+                                <span class="text-danger">*</span>
+                            </label>
+                                {{ form.genero }}
+                        </div>
+
                     </div>
-                    <!-- Apellido -->
+                
+                    <!-- Columna 2 -->
                     <div class="col-md-6">
+                        <!-- Apellido -->
                         <div class="my-3">
                             <label class="form-label">
                                 {{form.apellido.label|upper}}
@@ -30,22 +52,8 @@
                             </label>
                             {{form.apellido|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
                         </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <!-- Edad -->
-                    <div class="col-md-4">
-                        <div class="my-3">
-                            <label class="form-label">
-                                {{form.edad.label|upper}}
-                                <span class="text-danger">*</span>
-                            </label>
-                            {{form.edad|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
-                        </div>
-                    </div>
-                    <!-- Documento -->
-                    <div class="col-md-4">
+                
+                        <!-- Documento -->
                         <div class="my-3">
                             <label class="form-label">
                                 {{form.documento.label|upper}}
@@ -53,13 +61,15 @@
                             </label>
                             {{form.documento|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
                         </div>
-                    </div>
-                    <!-- Médico -->
-                    <div class="col-md-4">
+                
+                        <!-- Médico -->
                         <div class="my-3">
-                            <label class="form-label">{{form.medico.label|upper}}</label>
-                            {{form.medico|add_class:'form-control rounded-pill'}}
+                            <label class="form-label">{{form.medico.label|upper}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.medico }}
                         </div>
+                
                     </div>
                 </div>
 

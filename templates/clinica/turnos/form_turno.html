@@ -24,6 +24,15 @@
                             {{form.paciente|attr:"autofocus:on"|attr:'autocomplete:off'|add_class:'form-control rounded-pill'}}
                         </div>
                     </div>
+
+                    <!--  Medico -->
+                    <div class="col-md-4">
+                        <div class="my-3">
+                            <label class="form-label">{{form.medico.label|upper}}</label>
+                            {{form.medico}}
+                        </div>
+                    </div>
+
                     <!--  Fecha -->
                     <div class="col-md-4">
                         <div class="my-3">
@@ -31,6 +40,7 @@
                             {{form.fecha|add_class:'form-control rounded-pill'}}
                         </div>
                     </div>
+                    
                     {% if editar %}
                         <!--  Estado -->
                         <div class="col-md-4">

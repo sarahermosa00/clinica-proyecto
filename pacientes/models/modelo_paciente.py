@@ -12,6 +12,15 @@ class Paciente(ModeloBase):
     """
     nombre = models.CharField(max_length=25, verbose_name="Nombre")
     apellido = models.CharField(max_length=25, verbose_name="Apellido")
+    GENERO_CHOICES = (
+        ('F', 'Femenino'),
+        ('M', 'Masculino'),
+    )
+    genero = models.CharField(
+        max_length=1,
+        choices=GENERO_CHOICES,
+        default='F'
+    )
     edad = models.PositiveIntegerField(verbose_name="Edad")
     documento = models.CharField(max_length=11, unique=True, verbose_name="documento")
     email = models.EmailField(blank=True, null=True, verbose_name="Correo")

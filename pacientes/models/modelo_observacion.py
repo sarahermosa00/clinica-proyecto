@@ -7,11 +7,26 @@ from .modelo_paciente import Paciente
 
 class Observacion(ModeloBase):
     """
-    Solo un Profesional médico debe agregar observaciones al historial de cada paciente.
-    El conjunto de observaciones de cada paciente crea su historial médico.
+    Solo un Profesional médico debe agregar registros al historial de cada paciente.
+    El conjunto de registros de cada paciente crea su historial médico.
     """
     motivo_consulta = models.CharField(max_length=100, verbose_name="Motivo")
-    descripcion = models.TextField(verbose_name="Observación", blank=True, null=True)
+    especialidad_choices = (
+        ('Fisioterapia', 'Fisioterapia'),
+        ('Psicologia', 'Psicologia'),
+        ('Ginecologia', 'Ginecologia'),
+
+    )
+    especialidad = models.CharField(
+        verbose_name="Especialidad", 
+        blank=True,
+        choices=especialidad_choices,
+        default='Fisioterapia',
+        help_text="Nombre de la especialidad donde el/la paciente consulta"
+    )
+    tratamientos = models.TextField(verbose_name="Tratamiento", max_length=200, blank=True, null=True, help_text="Prescripciones médicas farmacológicas y no farmacológicas ")
+    procedimientos = models.TextField(verbose_name="Procedimiento", max_length=200, blank=True, null=True, help_text="Tipo de procedimiento o actividad que se realizó en la consulta")
+
     paciente = models.ForeignKey(Paciente, on_delete=models.CASCADE, verbose_name="Paciente", related_name="observaciones", blank=True, null=True)
 
     class Meta:

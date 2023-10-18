@@ -28,7 +28,7 @@ class Listar(LoginRequiredMixin, generic.ListView):
         paciente = Paciente.objects.get(id=self.kwargs['pk'])
         contexto = super().get_context_data(**kwargs)
         contexto['pacienteid'] = paciente.id
-        contexto['titulo'] = f'Historial médico de {paciente}'
+        contexto['titulo'] = f'Historial clínico de {paciente}'
         contexto['cantidad'] = Observacion.objects.filter(paciente=self.kwargs['pk']).count()
         contexto['volver'] = reverse_lazy('pacientes:detalle', kwargs={'pk':self.kwargs['pk']})
         return contexto
@@ -59,7 +59,7 @@ class Agregar(LoginRequiredMixin, generic.CreateView):
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
-        contexto['titulo'] = 'Agregar nueva observación'
+        contexto['titulo'] = 'Agregar nuevo registro de historial'
         contexto['url_volver'] = self.get_success_url
         return contexto
 
@@ -117,10 +117,11 @@ class Eliminar(LoginRequiredMixin, generic.DeleteView):
             'Observación eliminada!'
         )
         lista = self.request.GET.get('lista')
-        return reverse_lazy('pacientes:lista_observaciones', kwargs={'pk': lista})
+        return reverse_lazy('pacientes:lista_observaciones', kwargs={'pk': self.object.paciente.id})
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
         contexto['titulo'] = f'Eliminar {self.object.motivo_consulta}'
-        contexto['url_volver'] = reverse_lazy('pacientes:lista_observaciones', kwargs={'pk': lista})
+        contexto['url_volver'] = reverse_lazy('pacientes:lista_observaciones', kwargs={'pk': self.object.paciente.id})
+        
         return contexto

@@ -38,8 +38,8 @@
                             <p>
                                 <a href="{% url 'pacientes:editar_observacion' observacion.id %}?paciente={{pacienteid}}" 
                                 class="mx-2"><i class="fas fa-edit text-success"></i></a>
-                                {% if observacion.descripcion %}
-                                    {{observacion.descripcion}}
+                                {% if observacion.especialidad %}
+                                    {{observacion.especialidad}}
                                 {% else %}
                                     No hay más detalles...
                                 {% endif %}

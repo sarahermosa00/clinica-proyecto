@@ -5,6 +5,7 @@ from django.utils import timezone
 # Modelos
 from compartido.modelo_base import ModeloBase
 from . import Paciente
+from usuarios.models import Usuario
 
 
 class Turno(ModeloBase):
@@ -25,6 +26,15 @@ class Turno(ModeloBase):
         verbose_name="Paciente",
         related_name="turnos"
     ) 
+
+    medico = models.ForeignKey(
+        Usuario, 
+        on_delete=models.SET_NULL, 
+        verbose_name="Médico", 
+        blank=True,
+        null=True
+    )
+
     asistencia = models.CharField(
         max_length=1, 
         choices=ASISTIO_OPCIONES,  
@@ -32,6 +42,7 @@ class Turno(ModeloBase):
         blank=True,
         null=True
     )
+    
     fecha = models.DateField(verbose_name="Día", default=timezone.now)
 
     class Meta:

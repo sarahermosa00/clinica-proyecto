@@ -22,7 +22,7 @@
               <hr />
 
               {% if Paciente.medico %}
-                <p class="bg-success text-center">Paciente de {{Paciente.medico}}</p>
+                <p class="bg-success text-center">Paciente de {{Paciente.medico.nombre}} {{Paciente.medico.apellido}}</p>
               {% endif %}
               {% if Paciente.email %}
                 <p>{{Paciente.email}}</p>
@@ -37,7 +37,7 @@
               <!-- Chincheta -->
               <h3 class="text-center text-white py-3">
                 <img class="img-fluid" src="{% static 'img/cosito.svg' %}" alt="Cosito que apunta cosas" height="50" width="50">
-                Observaciones 
+                Historial clínico 
                 {% if cantidad %}
                 <span class="badge bg-danger text-white rounded-pill align-text-top">
                   {{cantidad}}
@@ -49,14 +49,14 @@
 
                   {% for observacion in Historial %}
                     <p>
-                      <span class="font-weight-bolder">{{observacion.motivo_consulta}}</span>. 
-                      {{observacion.descripcion|truncatechars:25}}
+                      <span class="font-weight-bolder">{{observacion.motivo_consulta}}</span>. Procedimientos:
+                      {{observacion.procedimientos|truncatechars:25}}
                     </p>
                     <hr />
                   {% endfor %} 
 
                 {% else %}
-                  <p class="text-center">No hay observaciones aún</p>
+                  <p class="text-center">No hay registros aún</p>
                 {% endif %}
               {% else %}
                     <p class="text-center">Solo su médico puede ver las observaciones</p>
