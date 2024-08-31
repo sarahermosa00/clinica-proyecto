@@ -29,21 +29,38 @@
                             <h3 class="text-center my-3">
                                 <span class="text-info">{{observacion.created_at|date:"SHORT_DATE_FORMAT"}}</span>
                                 {{observacion.motivo_consulta}}
-                                <a 
-                                href="{% url 'pacientes:eliminar_observacion' observacion.id %}?lista={{pacienteid}}"
-                                >
+                                <a href="{% url 'pacientes:eliminar_observacion' observacion.id %}?lista={{pacienteid}}">
                                     <i class="fas fa-times text-danger mx-2 float-right"></i>
+                                </a>
+                                <a href="{% url 'pacientes:editar_observacion' observacion.id %}?paciente={{pacienteid}}" 
+                                class="mx-2"> 
+                                    <i class="fas fa-edit text-success mx-2 float-right"></i>
                                 </a>
                             </h3>
                             <p>
-                                <a href="{% url 'pacientes:editar_observacion' observacion.id %}?paciente={{pacienteid}}" 
-                                class="mx-2"><i class="fas fa-edit text-success"></i></a>
-                                {% if observacion.especialidad %}
-                                    {{observacion.especialidad}}
+                               
+                                <div>{% if observacion.especialidad %}</div>
+                                    
+                                    <div>Especialidad: <h style="font-family: 'Arial', serif;">{{ observacion.especialidad }}</h></div>
+                                    <div>
+                                    Tratamientos: 
+                                    {% if observacion.tratamientos %}<h style="font-family: 'Arial', serif;">{{ observacion.tratamientos }}</h>
+                                    {% else %}
+                                        No hay tratamientos ...
+                                    {% endif %}
+                                    </div>
+                                    <div>
+                                    Procedimientos: 
+                                    {% if observacion.procedimientos %} <h style="font-family: 'Arial', serif;">{{ observacion.procedimientos }}</h>
+                                    {% else %}
+                                        No hay procedimientos aplicados ...
+                                    {% endif %}
+                                    </div>
                                 {% else %}
                                     No hay más detalles...
                                 {% endif %}
                             </p>
+
                         {% endfor %} 
                     {% else %}
                         <h1>No hay registros aun</h1>

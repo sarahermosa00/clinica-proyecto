@@ -49,8 +49,10 @@
 
                   {% for observacion in Historial %}
                     <p>
-                      <span class="font-weight-bolder">{{observacion.motivo_consulta}}</span>. Procedimientos:
-                      {{observacion.procedimientos|truncatechars:25}}
+                      <span class="font-weight-bolder">Motivo consulta: {{observacion.motivo_consulta}}</span>. 
+                      <!-- <div>
+                        Procedimientos: {{observacion.procedimientos}}
+                      </div> -->
                     </p>
                     <hr />
                   {% endfor %} 

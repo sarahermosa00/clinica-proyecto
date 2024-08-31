@@ -35,3 +35,51 @@ body{
 .imagen:hover{
   transform: scale(1.3);
 }
+
+/* Cambiar el color de fondo de las celdas del calendario */
+.calendar td {
+  background-color: #E6E6E6;
+}
+
+/* Cambiar el color de las fuentes de las fechas */
+.date {
+  color: #333;
+}
+
+/*Establecer un diseño de cuadrícula:*/
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-gap: 5px;
+}
+
+/*Sombras y bordes*/
+.calendar td {
+  border: 1px solid #999;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+
+/*Establecer estilos para el encabezado del calendario */
+.calendar th {
+  background-color: #333;
+  color: #fff;
+  font-size: 18px;
+}
+
+/*Responsive*/
+
+@media (max-width: 768px) {
+  .calendar th, .calendar td {
+      font-size: 14px;
+  }
+}
+
+/*Efectos de transicion*/
+.calendar td {
+  transition: background-color 0.3s ease;
+}
+
+.calendar td:hover {
+  background-color: #ffcc00;
+}

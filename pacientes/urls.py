@@ -4,6 +4,7 @@ from django.urls import path
 # Vistas
 
 from .views import pacientes, observaciones, turnos
+from .views.turnos import TurnosCalendarioView
 
 app_name = 'pacientes'
 
@@ -24,6 +25,7 @@ URL_OBSERVACIONES = [
 
 URL_TURNOS = [
     path('turnos/', turnos.Listar.as_view(), name='lista_turnos'),
+    path('turnos/calendario/', turnos.TurnosCalendarioView.as_view(), name='turnos_calendario'),
     path('turnos/agregar', turnos.Agregar.as_view(), name='agregar_turno'),
     path('turnos/editar/<uuid:pk>', turnos.Editar.as_view(), name='editar_turno'),
     path('turnos/eliminar/<uuid:pk>', turnos.Eliminar.as_view(), name='eliminar_turno')

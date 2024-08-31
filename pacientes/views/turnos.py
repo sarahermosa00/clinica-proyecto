@@ -4,9 +4,13 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.utils import timezone
 from django.views import generic
+from django.views import View
 from datetime import datetime, timedelta
 from calendar import HTMLCalendar
 from django.utils.safestring import mark_safe
+from django.shortcuts import render
+from django.http import JsonResponse
+
 
 # Modelos
 from ..models import Turno
@@ -115,3 +119,19 @@ class Eliminar(LoginRequiredMixin, generic.DeleteView):
         contexto['titulo'] = f'Eliminar el turno de {self.object.paciente}'
         contexto['url_volver'] = reverse_lazy('pacientes:lista_turnos')
         return contexto
+
+class TurnosCalendarioView(View):
+    def get(self, request, *args, **kwargs):
+        # Recupera los turnos desde la base de datos
+        turnos = Turno.objects.all()
+
+        # Formatea los datos de los turnos para que coincidan con la estructura de eventos de FullCalendar
+        eventos = []
+        for turno in turnos:
+            eventos.append({
+                'title': turno.paciente.nombre,  # Título del evento 
+                'start': turno.fecha.isoformat(),  # Fecha de inicio del evento en formato ISO
+                'medico': turno.paciente.medico.nombre,
+            })
+
+        return JsonResponse(eventos, safe=False)

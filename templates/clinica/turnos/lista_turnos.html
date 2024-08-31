@@ -2,9 +2,11 @@
 {% load usuarios_tags %} 
 {% load static %} 
 
+
 {% block content %}
-    {% if user|sector:"Secretaria" or user|sector:"Gerencia" %}
+    {% if user|sector:"Medico" or user|sector:"Secretaria" or user|sector:"Gerencia"%}
         {% include 'componentes/buscar_form.html' %}
+
         <div class="row">
             <div class="col-sm-3">
                 <!-- Turnos del doctor -->
@@ -88,6 +90,47 @@
                         <h1 class="text-center my-3 lead">No hay turnos aún</h1>
                     {% endif %}
                 </div>
+
+            <!-- Agregar un botón con un ícono para acceder al calendario -->
+            <a href="#" id="verCalendario" class="btn btn-primary">
+                <i class="fas fa-calendar"></i> Calendario
+            </a>
+
+            <br>
+            <br>
+
+            <!-- Div para mostrar el calendario -->
+            <div id="calendario"></div>
+
+            <!-- Script para manejar la carga de eventos desde la vista TurnosCalendarioView -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.getElementById('verCalendario').addEventListener('click', function(event) {
+                        event.preventDefault();
+                        fetch("{% url 'pacientes:turnos_calendario' %}")
+                            .then(response => response.json())
+                            .then(data => {
+                                var calendarEl = document.getElementById('calendario');
+                                var calendar = new FullCalendar.Calendar(calendarEl, {
+                                    initialView: 'dayGridMonth',
+                                    events: data,
+                                    locale: 'es',  // Configura el idioma en español
+                                    eventContent: function(arg) {
+                                        return {
+                                            html: `<b>Paciente: ${arg.event.title}</b>`,
+
+                                        };
+                                    },
+                                    eventBackgroundColor: 'green', // Color de fondo para eventos
+                                });
+                                calendar.render();
+                            })
+                            .catch(error => console.error(error));
+                    });
+                });
+                </script>
+                
+
                 {% include 'componentes/paginacion.html' %}
             </div>
         </div>
@@ -98,4 +141,8 @@
             </div>
         </div>
     {% endif %}
+
+    
 {% endblock %}
+
+

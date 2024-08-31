@@ -4,6 +4,10 @@
 
 .vscode
 
+##Node##
+
+#node_modules
+
 ### Django ###
 *.log
 *.pot
