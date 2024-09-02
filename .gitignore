@@ -6,7 +6,10 @@
 
 ##Node##
 
-node_modules
+node_modules/
+node_modules/@fullcalendar/core/locales
+staticfiles
+.env
 
 ### Django ###
 *.log
