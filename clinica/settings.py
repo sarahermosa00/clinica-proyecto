@@ -31,8 +31,8 @@ SECRET_KEY = 'l#@pu_m^4tle$5kl)khq54cl#ntc8n_b&)**kqd65d44%e!=h)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','clinica-proyecto-production.up.railway.app']
-CSRF_TRUSTED_ORIGINS = ['http://*', 'https://clinica-proyecto-production.up.railway.app']
+ALLOWED_HOSTS = ['3.16.114.203']
+# CSRF_TRUSTED_ORIGINS = ['http://*', 'https://clinica-proyecto-production.up.railway.app']
 
 
 # Application definition
@@ -106,15 +106,15 @@ WSGI_APPLICATION = 'clinica.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    #'default': {
-    #    'ENGINE': 'django.db.backends.postgresql',
-     #   'NAME': 'clinica',
-     #   'USER': 'postgres',
-      #  'PASSWORD': '1234',
-      #  'HOST': 'localhost',
-      #  'PORT': '5432',
-    #}
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': 'clinica',
+       'USER': 'postgres',
+       'PASSWORD': '1234',
+       'HOST': 'localhost',
+       'PORT': '5432',
+    }
+    # 'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
 
