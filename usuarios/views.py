@@ -46,12 +46,17 @@ class IniciarSesion(LoginView):
             elif grupo.name == ROL_OPCIONES[2][1]:  
                 # Gerencia
                 return reverse_lazy('productos:lista')
-            elif grupo.name == ROL_OPCIONES[3][1]:  
+            elif grupo.name == ROL_OPCIONES[3][1]: 
+                 # Administracion 
+                return reverse_lazy('salarios:lista')
+            elif grupo.name == ROL_OPCIONES[4][1]:  
                 # Venta
                 return reverse_lazy('productos:lista_pedidos')
-            elif grupo.name == ROL_OPCIONES[4][1]:  
+
+            elif grupo.name == ROL_OPCIONES[5][1]:  
                 # Taller
                 return reverse_lazy('productos:lista_pedidos')
+
         return reverse_lazy('productos:lista')
 
     def get_context_data(self, **kwargs):

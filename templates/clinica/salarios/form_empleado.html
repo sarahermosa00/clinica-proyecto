@@ -1,0 +1,135 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %}
+{% load widget_tweaks %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+    {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+        <form method="post" enctype="multipart/form-data" id="Formulario">
+            {% csrf_token %}
+            <div class="container py-3">
+                <h1 class="display-5 text-center">{{titulo}}</h1>
+                
+                <div class="row">
+                    <!-- Columna 1 -->
+                    <div class="col-md-6">
+                        <!-- Nombre -->
+                        <div class="my-3 mb-3">
+                            <label class="form-label">
+                                NOMBRE Y APELLIDO
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{form.nombre|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
+                        </div>
+                
+                        <!-- Documento -->
+                        <div class="my-3 mb-3">
+                            <label class="form-label">
+                                {{form.documento.label|upper}}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{form.documento|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
+                        </div>
+                        
+                        <!-- Cuenta Bancaria -->
+                        <div class="my-3 mb-3">
+                            <label class="form-label">{{ form.cuenta_bancaria.label|upper }}</label>
+                            {{ form.cuenta_bancaria|add_class:'form-control rounded-pill' }}
+                        </div>
+
+                        <!-- Fecha de contratación -->
+                        <div class="my-3">
+                            <label class="form-label">{{form.fecha_contratacion.label|upper}}</label>
+                            {{form.fecha_contratacion|attr:"type:date"|add_class:'form-control rounded-pill'}}
+                        </div>
+
+                    </div>
+                
+                    <!-- Columna 2 -->
+                    <div class="col-md-6">
+                        <!-- Categoría -->
+                        <div class="my-3">
+                            <label class="form-label">
+                                {{form.categoria.label|upper}}
+                            </label>
+                            {{form.categoria|add_class:'form-control rounded-pill'}}
+                        </div>
+                
+                        <!-- Salario Base -->
+                        <div class="my-3">
+                            <label class="form-label">{{form.salario_base.label|upper}}</label>
+                            {{ form.salario_base|attr:"placeholder:0.00"|add_class:'form-control rounded-pill' }}
+                        </div>
+                
+                        <!-- Email -->
+                        <div class="my-3">
+                            <label class="form-label">{{form.email.label|upper}}</label>
+                            {{form.email|attr:"autocomplete:off"|attr:"type:email"|add_class:'form-control rounded-pill'}}
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="my-3">
+                            <label class="form-label">{{form.telefono.label|upper}}</label>
+                            {{form.telefono|add_class:'form-control rounded-pill'}}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Bonificaciones -->
+                    <div class="col-md-6">
+                        <div class="my-3">
+                            <label class="form-label">{{form.bonificaciones.label|upper}}</label>
+                            {{ form.bonificaciones|attr:"placeholder:0.00"|add_class:'form-control rounded-pill' }}
+                        </div>
+                    </div>
+
+                    <!-- Deducciones -->
+                    <div class="col-md-6">
+                        <div class="my-3">
+                            <label class="form-label">{{form.deducciones.label|upper}}</label>
+                            {{ form.deducciones|attr:"placeholder:0.00"|add_class:'form-control rounded-pill' }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Estado -->
+                    <div class="col-md-6">
+                        <div class="my-3">
+                            <label class="form-label">ESTADO</label>
+                            {{form.estado|add_class:'form-control rounded-pill'}}
+                        </div>
+                    </div>
+
+                    <!-- Fecha de Terminación -->
+                    <div class="col-md-6">
+                        <div class="my-3">
+                            <label class="form-label">{{form.fecha_terminacion.label|upper}}</label>
+                            {{form.fecha_terminacion|attr:"type:date"|add_class:'form-control rounded-pill'}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center">
+                    <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example">
+                        <a href="{% url 'salarios:lista' %}" type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-angle-double-left text-info"></i> Volver
+                        </a>
+                        <button type="submit" class="btn btn-outline-primary">
+                            <i class="fas fa-check text-info"></i> Guardar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        <div class="row d-flex justify-content-center">
+            <div class="col-8">
+                <h1 class="text-center my-5 lead">No tienes permiso para cargar o modificar empleados</h1>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

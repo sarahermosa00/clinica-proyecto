@@ -16,4 +16,4 @@ class FormularioUsuario(UserCreationForm):
         super().__init__(*args, **kwargs)
         # Filtra las opciones del campo 'rol' para mostrar solo 'Medico' y 'Secretaria'
         self.fields['rol'].queryset = Usuario._meta.get_field('rol').choices  # Filtra solo las opciones predefinidas
-        self.fields['rol'].choices = [choice for choice in Usuario._meta.get_field('rol').choices if choice[0] in ['S', 'M']]
+        self.fields['rol'].choices = [choice for choice in Usuario._meta.get_field('rol').choices if choice[0] in ['S', 'M', 'A']]

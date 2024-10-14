@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %} 
+{% load custom_filters %}
+
+{% block content %}
+    {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-10 ">
+                <div class="my-3 p-3 bg-white rounded shadow-lg">
+                    <h5 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6"><strong> Detalle del Pago de Salario </strong></h6>
+
+                    <!-- Información del pago -->
+                    <div class="row my-3">
+                        <div class="col-md-4">
+                            <p>ID del Pago: {{ pago.id }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>Fecha de Pago: {{ pago.fecha_pago }}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>Total Pagado: {{ pago.salario_total|formato_guaranies }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Lista de empleados asociados al pago -->
+                    <h6 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6">Empleados Asociados</h6>
+                    {% if empleados_salarios %}
+                        <div class="table-responsive my-3">
+                            <table class="table table-hover table-bordered">
+                                <thead class="table-warning">
+                                    <tr>
+                                        <th>Nombre del Empleado</th>
+                                        <th>Salario Base</th>
+                                        <th>Bonificaciones</th>
+                                        <th>Deducciones</th>
+                                        <th>Salario Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in empleados_salarios %}
+                                    <tr>
+                                        <td>{{ item.empleado.nombre }}</td>
+                                        <td>{{ item.empleado.salario_base|formato_guaranies }}</td>
+                                        <td>{{ item.empleado.bonificaciones|formato_guaranies }}</td>
+                                        <td>{{ item.empleado.deducciones|formato_guaranies }}</td>
+                                        <td>{{ item.salario_total|formato_guaranies }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <h1 class="text-center my-3 lead">No hay empleados asociados a este pago</h1>
+                    {% endif %}
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-center my-4">
+                        <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example">
+                            <a href="{% url 'salarios:pantalla_salarios' %}" type="button" class="btn btn-outline-primary">
+                                <i class="fas fa-angle-double-left text-info"></i> Volver
+                            </a>
+                            <!-- Botón de exportar a XLSX -->
+                            <a href="{% url 'salarios:exportar_xlsx' pago.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-file-excel text-info"></i> Exportar a XLSX
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row d-flex justify-content-center">
+            <div class="col-8">
+                <h1 class="text-center my-5 lead">No tienes permiso para ver los detalles del pago de salarios</h1>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

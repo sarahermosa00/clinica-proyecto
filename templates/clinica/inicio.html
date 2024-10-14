@@ -33,7 +33,7 @@
       <h1 class="h3 mb-1 text-dark lh-1 py-1 border-top border-dark border-2">Sistema de Gestión Clínica</h1>
       <small class="lead">
         {% if user.is_authenticated %}
-        <a href="{% url 'productos:lista' %}" style="text-decoration: none;" class="text-info">
+        <a href="{% url 'pacientes:lista' %}" style="text-decoration: none;" class="text-info">
         Entrar
         </a>
         {% else %}

@@ -32,23 +32,26 @@
           </li>
         {% endif %}
         
-        {% if user|sector:"Venta" or user|sector:"Gerencia" %}
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
         <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'productos:lista' %}">
-            PRODUCTOS
-          </a>
-        </li>
-        <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'productos:categorias' %}">
-            CATEGORIAS
+          <a class="nav-link" href="{% url 'salarios:lista' %}">
+            EMPLEADOS
           </a>
         </li>
         {% endif %}
 
-        {% if user|sector:"Venta" or user|sector:"Taller" or user|sector:"Gerencia" %}
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
         <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'productos:lista_pedidos' %}">
-            PEDIDOS
+          <a class="nav-link" href="{% url 'salarios:categorias' %}">
+            DEPARTAMENTOS
+          </a>
+        </li>
+        {% endif %}
+
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+        <li class="nav-item my-2">
+          <a class="nav-link" href="{% url 'salarios:pantalla_salarios' %}">
+            SALARIOS
           </a>
         </li>
         {% endif %}
@@ -59,6 +62,7 @@
             USUARIOS
           </a>
         </li>
+
         <li class="nav-item my-2">
           <a class="nav-link" href="{% url 'usuarios:actividades' %}">
             HISTORIAL

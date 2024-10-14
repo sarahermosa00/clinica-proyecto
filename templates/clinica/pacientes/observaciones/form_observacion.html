@@ -19,8 +19,9 @@
                             <div class="my-3">
                                 <label class="form-label">
                                     {{form.motivo_consulta.label|upper}}
+                                    <span class="text-danger">*</span>
                                 </label>
-                                {{form.motivo_consulta|attr:'autocomplete:off'|attr:'autofocus:on'|add_class:'form-control text-center rounded'}}
+                                {{form.motivo_consulta|attr:'autocomplete:off'|attr:'autofocus:on'|add_class:'form-control rounded-pill'}}
                             </div>
                         </div>
                     </div>

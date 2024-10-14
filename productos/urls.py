@@ -14,11 +14,11 @@ URLS_PRODUCTOS = [
     path('eliminar/<uuid:pk>', productos.Eliminar.as_view(), name='eliminar'),
 ]
 
-URLS_CATEGORIAS = [
-    path('categorias/', categorias.Agregar.as_view(), name='categorias'),
-    path('categorias/editar/<int:pk>', categorias.Editar.as_view(), name='editar_categoria'),
-    path('categorias/eliminar/<int:pk>', categorias.Eliminar.as_view(), name='eliminar_categoria')
-]
+# URLS_CATEGORIAS = [
+#     path('categorias/', categorias.Agregar.as_view(), name='categorias'),
+#     path('categorias/editar/<int:pk>', categorias.Editar.as_view(), name='editar_categoria'),
+#     path('categorias/eliminar/<int:pk>', categorias.Eliminar.as_view(), name='eliminar_categoria')
+# ]
 
 
 URLS_PEDIDOS = [
@@ -34,4 +34,4 @@ URLS_DETALLES = [
     path('pedidos/editar_producto/<uuid:pk>', detalles.Editar.as_view(), name='editar_detalle')
 ]
 
-urlpatterns = URLS_PRODUCTOS + URLS_CATEGORIAS + URLS_PEDIDOS + URLS_DETALLES
+urlpatterns = URLS_PRODUCTOS + URLS_PEDIDOS + URLS_DETALLES

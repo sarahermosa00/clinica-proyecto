@@ -1,0 +1,1 @@
+from .modelo_salario import Categoria, Empleado, PagoSalario
