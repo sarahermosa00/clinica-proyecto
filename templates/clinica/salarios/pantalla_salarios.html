@@ -1,0 +1,94 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %} 
+{% load custom_filters %}
+
+{% block content %}
+    {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+            <!-- Filtro por mes y año -->
+            <div class="row d-flex justify-content-center">
+                <div class="col-sm-10">
+                        <form method="get" class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="mes" class="form-label">Mes</label>
+                                <select name="mes" id="mes" class="form-control">
+                                    <option value="">Todos los meses</option>
+                                    {% for mes_num in meses %}
+                                        <option value="{{ mes_num }}" {% if mes_num == mes_actual %}selected{% endif %}>{{ mes_num }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="anho" class="form-label">Año</label>
+                                <input type="number" name="anho" id="anho" class="form-control" value="{{ anho_actual }}" min="2000" max="{{ anho_actual }}">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary">Filtrar</button>
+                            </div>
+                        </form>
+                </div>
+            </div>
+    
+    <!-- Encabezado de la sección -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-10">
+                <div class="my-3 p-3 bg-white rounded shadow-lg">
+                    <div class="row">
+                        <div class="col-6">
+                            <h6 class="border-bottom pb-2 mb-0">
+                                Gestión de Salarios
+                                <span class="badge bg-warning rounded-pill align-text-bottom text-dark">{{salarios.count}}</span>
+                            </h6>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-grid gap-2 col-6 mx-auto">
+                                <!-- Botón para generar un nuevo pago de salario -->
+                                <a type="button" class="btn btn-warning text-dark btn-sm" href="{% url 'salarios:generar_pago' %}">
+                                    <i class="fas fa-plus text-dark"></i>
+                                    Generar Pago de Salario
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de pagos de salarios generados -->
+                    {% if salarios %}
+                        <div class="table-responsive my-3">
+                            <table class="table table-hover table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>Nro</th>
+                                        <th>Fecha de Pago</th>
+                                        <th>Total Pagado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for pago in salarios %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>  <!-- Muestra el número de iteración -->
+                                        <td>{{ pago.fecha_pago }}</td>
+                                        <td>{{ pago.salario_total|formato_guaranies }}</td>
+                                        <td>
+                                            <a href="{% url 'salarios:detalle_pago_salario' pago.id %}" class="btn btn-primary btn-sm">Ver Detalle</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <h1 class="text-center my-3 lead">No hay pagos de salarios aún</h1>
+                    {% endif %}
+                </div>
+                <!-- Incluye el componente de paginación si es necesario -->
+                {% include 'componentes/paginacion.html' %}
+            </div>
+        </div>
+    {% else %}
+        <div class="row d-flex justify-content-center">
+            <div class="col-8">
+                <h1 class="text-center my-5 lead">No tienes permiso para ver los detalles de los pagos de salarios</h1>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

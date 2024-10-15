@@ -44,6 +44,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     'productos.apps.ProductosConfig',
     'pacientes.apps.PacientesConfig',
+    'salarios.apps.SalariosConfig',
     'usuarios.apps.UsuariosConfig',
     'compartido',
     'reportes'
@@ -114,9 +115,7 @@ DATABASES = {
        'HOST': 'localhost',
        'PORT': '5432',
     }
-    # 'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
-}
-
+    # 'default': dj_database_url.config(default=os.getenv('DATABASE_URL'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

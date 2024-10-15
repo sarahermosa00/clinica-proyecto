@@ -6,20 +6,20 @@ from django.db.models import Sum, Q
 from django.views import generic
 
 # Modelos
-from ..models import Producto #Categoria
+from ..models import Empleado, Categoria
 from usuarios.models import registrarActividad
 
 # Formularios
-from ..forms import FormularioProducto
+from ..forms import FormularioEmpleado
 
 
 class Listar(LoginRequiredMixin, generic.ListView):
     """
     Lista todos los productos cargados en el sistema. 
     """
-    model = Producto
-    template_name = 'clinica/productos/lista_productos.html'
-    context_object_name = 'Productos'
+    model = Empleado
+    template_name = 'clinica/salarios/lista_empleados.html'
+    context_object_name = 'Empleados'
     paginate_by = 5
     # page_kwarg
 
@@ -27,92 +27,91 @@ class Listar(LoginRequiredMixin, generic.ListView):
         q_busqueda = self.request.GET.get('query')
         q_categoria_nombre = self.request.GET.get('categoria')
         if q_busqueda:
-            return Producto.objects.filter(
+            return Empleado.objects.filter(
                 Q(nombre__in=q_busqueda.split()) | Q(nombre__icontains=q_busqueda.split()[0])
             )
         if q_categoria_nombre:
             q_categoria = Categoria.objects.get(nombre=q_categoria_nombre)
-            return Producto.objects.filter(categoria=q_categoria.id)    
-        return Producto.objects.all()
+            return Empleado.objects.filter(categoria=q_categoria.id)    
+        return Empleado.objects.all()
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
-        contexto['titulo'] = 'Lista de productos'
-        contexto['buscar'] = 'Ingresa el nombre de alǵun producto'
-        contexto['cantidad'] = Producto.objects.all().aggregate(Sum('stock')).get('stock__sum')
-        # contexto['categorias'] = Categoria.objects.all()
+        contexto['titulo'] = 'Lista de empleados'
+        contexto['buscar'] = 'Ingresa el nombre de alǵun empleado'
+        contexto['categorias'] = Categoria.objects.all()
         return contexto
 
 
 class Agregar(LoginRequiredMixin, generic.CreateView):
     """ 
-    Agrega un nuevo producto y retorna a la lista de pacientes.
+    Agrega un nuevo empleado y retorna a la lista de empleados.
     """
-    model = Producto
-    form_class = FormularioProducto
-    template_name = 'clinica/productos/form_producto.html'
-    success_url = reverse_lazy('productos:lista')
+    model = Empleado
+    form_class = FormularioEmpleado
+    template_name = 'clinica/salarios/form_empleado.html'
+    success_url = reverse_lazy('salarios:lista')
 
     def get_success_url(self):
         registrarActividad(
             self.request,
-            'Cargó un producto'
+            'Cargó un empleado'
         )
         messages.success(
             self.request,
-            'Producto cargado!'
+            'Empleado cargado!'
         )
         path_previo = self.request.GET.get('prev')
-        # Si accedemos desde detalle pedido, volverá al detalle
+        # Si accedemos desde detalle empleado, volverá al detalle
         if path_previo:
-            pedido_id = path_previo.split('/').pop()
-            return reverse_lazy('productos:agregar_detalle', kwargs={'pk':pedido_id})
+            empleado_id = path_previo.split('/').pop()
+            return reverse_lazy('salarios:detalle_empleado', kwargs={'pk':empleado_id})
         else:
-            # Si no, vuelve a lista de productos
-            return reverse_lazy('productos:lista')
+            # Si no, vuelve a lista de empleados
+            return reverse_lazy('salarios:lista')
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
-        contexto['titulo'] = 'Agregar producto'
+        contexto['titulo'] = 'Agregar empleados'
         return contexto
 
 
 
 class Detalle(LoginRequiredMixin, generic.DetailView):
     """ 
-    Muestra toda la información de un determinado producto.
+    Muestra toda la información de un determinado empleado.
     """
-    model = Producto
-    template_name = 'clinica/productos/detalle_producto.html'
-    context_object_name = 'Producto'
+    model = Empleado
+    template_name = 'clinica/salarios/detalle_empleado.html'
+    context_object_name = 'Empleado'
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
         contexto['titulo'] = self.object
-        contexto['cantidad'] = Producto.objects.count()
+        contexto['cantidad'] = Empleado.objects.count()
         return contexto
 
 
 class Editar(LoginRequiredMixin, generic.UpdateView):
     """ 
-    Modifica la información de un determinado producto.
+    Modifica la información de un determinado empleado.
     """
-    model = Producto
-    form_class = FormularioProducto
-    template_name = 'clinica/productos/form_producto.html'
+    model = Empleado
+    form_class = FormularioEmpleado
+    template_name = 'clinica/salarios/form_empleado.html'
 
     def get_success_url(self):
         registrarActividad(
             self.request,
-            'Modificó un producto'
+            'Modificó un empleado'
         )
         messages.success(
             self.request,
-            'Producto modificado!'
+            'Empleado modificado!'
         )
         ruta = self.request.META['HTTP_REFERER']
-        producto_uuid = ruta.split('/').pop()
-        return reverse_lazy('productos:detalle', kwargs={'pk': producto_uuid})
+        empleado_uuid = ruta.split('/').pop()
+        return reverse_lazy('salarios:detalle_empleado', kwargs={'pk': empleado_uuid})
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
@@ -123,24 +122,24 @@ class Editar(LoginRequiredMixin, generic.UpdateView):
 
 class Eliminar(LoginRequiredMixin, generic.DeleteView):
     """ 
-    Elimina un producto del sistema.
+    Elimina un empleado del sistema.
     """
-    model = Producto
+    model = Empleado
     template_name = 'componentes/delete.html'
     
     def get_success_url(self):
         registrarActividad(
             self.request,
-            'Eliminó un producto'
+            'Eliminó un empleado'
         )
         messages.success(
             self.request,
-            'Producto eliminado!'
+            'Empleado eliminado!'
         )
-        return reverse_lazy('productos:lista')
+        return reverse_lazy('salarios:lista')
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
-        contexto['titulo'] = f'Eliminar {self.object}'
-        contexto['url_volver'] = reverse_lazy('productos:lista')
+        contexto['titulo'] = f'eliminar a {self.object.nombre.upper()}'
+        contexto['url_volver'] = reverse_lazy('salarios:lista')
         return contexto

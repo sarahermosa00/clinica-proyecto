@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h2>Generar Pago de Salario</h2>
+
+<!-- Formulario para seleccionar empleados -->
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Generar Pago</button>
+</form>
+{% endblock %}

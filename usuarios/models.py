@@ -9,6 +9,7 @@ ROL_OPCIONES = (
     ('M', 'Medico'),  
     ('S', 'Secretaria'),  
     ('G', 'Gerencia'), 
+    ('A', 'Administracion'),
     ('V', 'Venta'),
     ('T', 'Taller') 
 )

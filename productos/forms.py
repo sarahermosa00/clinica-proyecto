@@ -30,8 +30,8 @@ class FormularioDetallePedido(ModelForm):
         fields = ('producto', 'cantidad')
 
 
-class FormularioCategoria(ModelForm):
+# class FormularioCategoria(ModelForm):
 
-    class Meta:
-        model = Categoria
-        fields = '__all__'
+#     class Meta:
+#         model = Categoria
+#         fields = '__all__'

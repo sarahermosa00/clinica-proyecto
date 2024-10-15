@@ -1,0 +1,97 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+  {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+    <div class="row">
+      <div class="card shadow">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4 d-flex justify-content-center my-2">
+              {% if Empleado.imagen %}
+                <img class="img-fluid rounded imagen" src="{{Empleado.imagen.url}}" alt="Imagen del empleado" height="250" width="250">
+              {% else %}
+                <img class="img-fluid" src="{% static 'img/default.svg' %}" alt="Imagen del empleado" height="250" width="250">
+              {% endif %}
+            </div>
+
+            <div class="col-md-4 text-center">
+              <h2 class="my-2">
+                {{Empleado.nombre}}
+              </h2>
+              <hr />
+
+              <!-- Mostrar departamento -->
+              {% if Empleado.categoria %}
+                <p class="bg-success text-center">Departamento: {{Empleado.categoria.nombre}}</p>
+              {% endif %}
+
+              <!-- Mostrar email -->
+              {% if Empleado.email %}
+                <p>{{Empleado.email}}</p>
+              {% else %}
+                <p>No proporcionó correo electrónico</p>
+              {% endif %}
+
+              <!-- Mostrar otros detalles -->
+              <p>Documento: {{Empleado.documento}}</p>
+              <p>Teléfono: {{Empleado.telefono}}</p>
+              <p>Fecha de contratación: {{Empleado.fecha_contratacion}}</p>
+              {% if Empleado.fecha_terminacion %}
+                <p>Fecha de terminación: {{Empleado.fecha_terminacion}}</p>
+              {% endif %}
+            </div>
+
+            <div class="col-md-4 bg-warning bg-gradient shadow-sm">
+              <!-- Estado del empleado -->
+              <h3 class="text-center text-white py-3">
+                Estado actual: 
+                {% if Empleado.estado == 'A' %}
+                  <span class="badge bg-success">Activo</span>
+                {% else %}
+                  <span class="badge bg-danger">Inactivo</span>
+                {% endif %}
+              </h3>
+              <!-- Salario Base -->
+              <div class="my-2">
+                <label class="form-label">Salario Base: {{ Empleado.salario_base|formato_guaranies }} </label>
+              </div>              
+              <!-- Bonificaciones -->
+              <div class="my-2">
+                <label class="form-label">Bonificacion Actual: {{ Empleado.bonificaciones|formato_guaranies }} </label>
+              </div>   
+              <!-- Deducciones -->
+              <div class="my-2">
+                <label class="form-label">Deduccion Actual: {{ Empleado.deducciones|formato_guaranies }} </label>
+              </div>   
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-center my-4">
+        <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example">
+          <a href="{% url 'salarios:lista' %}" type="button" class="btn btn-outline-primary">
+            <i class="fas fa-angle-double-left text-info"></i> Volver
+          </a>
+          
+          <a href="{% url 'salarios:editar_empleado' Empleado.id %}" type="button" class="btn btn-outline-primary">
+            <i class="fas fa-user-edit text-info"></i> Editar
+          </a>
+
+          <a href="{% url 'salarios:eliminar_empleado' Empleado.id %}" type="button" class="btn btn-outline-danger">
+            <i class="fas fa-times text-danger"></i> Eliminar
+          </a>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="row d-flex justify-content-center">
+      <div class="col-8">
+        <h1 class="text-center my-5 lead">No tienes permiso para ver los detalles del empleado</h1>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
