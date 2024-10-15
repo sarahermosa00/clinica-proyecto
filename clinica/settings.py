@@ -31,7 +31,7 @@ SECRET_KEY = 'l#@pu_m^4tle$5kl)khq54cl#ntc8n_b&)**kqd65d44%e!=h)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['3.16.114.203']
+ALLOWED_HOSTS = ['18.222.3.214', 'localhost', '127.0.0.1']
 # CSRF_TRUSTED_ORIGINS = ['http://*', 'https://clinica-proyecto-production.up.railway.app']
 
 
