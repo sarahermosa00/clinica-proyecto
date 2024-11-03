@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %}
+{% load widget_tweaks %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+{% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+<form method="post" enctype="multipart/form-data" id="Formulario">
+    {% csrf_token %}
+    <div class="container py-3">
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        <h1 class="display-5 text-center">{{titulo}}</h1>
+
+        <div class="row">
+            <!-- Columna 1 -->
+            <div class="col-md-6">
+                <!-- NOMBRE OBJETO -->
+                <div class="my-3 mb-3">
+                    <label class="form-label">
+                        NOMBRE OBJETO
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{form.nombre_objeto|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
+                </div>
+
+                <!-- codigo objeto -->
+                <div class="my-3 mb-3">
+                    <label class="form-label">
+                        {{form.codigo_objeto.label|upper}}
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{form.codigo_objeto|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
+                </div>
+
+                      <!-- precio objeto -->
+                <div class="my-3 mb-3">
+                    <label class="form-label">
+                        {{form.precio_objeto.label|upper}}
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{form.precio_objeto|attr:"autocomplete:off"|add_class:'form-control rounded-pill'}}
+                </div>
+
+               
+            </div>
+
+            <div class="d-flex justify-content-center">
+                <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example">
+                    <a href="{% url 'factura:pantalla_objetos' %}" type="button" class="btn btn-outline-primary">
+                        <i class="fas fa-angle-double-left text-info"></i> Volver
+                    </a>
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-check text-info"></i> Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+</form>
+{% else %}
+<div class="row d-flex justify-content-center">
+    <div class="col-8">
+        <h1 class="text-center my-5 lead">No tienes permiso para cargar o modificar objetos</h1>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

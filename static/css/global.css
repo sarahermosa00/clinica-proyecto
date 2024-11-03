@@ -1,8 +1,12 @@
 body{
   font-family: 'Mulish', sans-serif;
+  
 }
 
 .footer-basic {
+  display: grid;
+  min-height: 100dvh;
+  grid-template-rows: auto 1fr auto;
   padding: 40px 0;
   color: #4b4c4d;
 }
@@ -13,6 +17,9 @@ body{
   font-size: 13px;
   color: #aaa;
   margin-bottom: 0;
+
+
+
 }
 
 .card-img {

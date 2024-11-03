@@ -47,7 +47,8 @@ LOCAL_APPS = [
     'salarios.apps.SalariosConfig',
     'usuarios.apps.UsuariosConfig',
     'compartido',
-    'reportes'
+    'reportes',
+    'factura'
 ]
 
 DEV_APPS = [
@@ -116,7 +117,7 @@ DATABASES = {
        'PORT': '5432',
     }
     # 'default': dj_database_url.config(default=os.getenv('DATABASE_URL'
-
+}
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 

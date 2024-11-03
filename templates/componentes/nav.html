@@ -3,8 +3,10 @@
 <nav
   class="navbar navbar-expand-lg fixed-top navbar-light bg-light" aria-label="Main navigation">
   <div class="container-fluid">
+
+    <!--href="{% url 'compartido:inicio' %}"-->
     
-    <a class="navbar-brand" href="{% url 'compartido:inicio' %}">
+    <a class="navbar-brand">
       <img src="{% static 'favicon/favicon-32x32.png' %}" alt="Logo">
     </a>
     
@@ -55,6 +57,33 @@
           </a>
         </li>
         {% endif %}
+        
+<!-- ----------------------añadidos--------------------------- -->
+
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+        <li class="nav-item my-2">
+          <a class="nav-link" href="{% url 'factura:pantalla_proveedor' %}">
+            PROVEEDORES
+          </a>
+        </li>
+        {% endif %}
+
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+        <li class="nav-item my-2">
+          <a class="nav-link" href="{% url 'factura:pantalla_objetos' %}">
+            OBJETOS
+          </a>
+        </li>
+        {% endif %}
+
+        <!-- {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+        <li class="nav-item my-2">
+          <a class="nav-link" href="{% url 'factura:pantalla_objetos' %}">
+            FACTURA
+          </a>
+        </li>
+        {% endif %} -->
+
 
         {% if user|sector:"Gerencia" %}
         <li class="nav-item my-2">

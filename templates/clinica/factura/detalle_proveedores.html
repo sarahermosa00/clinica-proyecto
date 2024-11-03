@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %} 
+
+{% load custom_filters %}
+
+{% block content %}
+    {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-10 ">
+                <div class="my-3 p-3 bg-white rounded shadow-lg">
+                    <h5 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6"><strong> Detalle de Proveedores </strong></h6>
+
+          
+                    <!-- Lista de todos los proveedores -->
+                    <h6 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6">Proveedores Asociados</h6>
+                    {% if proveedor %}
+
+                    <!-- esta parte es el titulo de la tabla -->
+                        <div class="table-responsive my-3">
+                            <table class="table table-hover table-bordered">
+                                <thead class="table-warning">
+                                    <tr>
+                                        <th>Razon social</th>
+                                        <th>Ruc</th>
+                                        <th>Telefono</th>
+                                        <th>Direccion</th>
+                                        <th>Tipo</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+
+                                <!-- contenido de la tabla -->
+                                <tbody>
+                                    <!-- no es iterable porque se quiere mostrar nada mas ya que el detalle se da sobre un objeto no sobre una lista, es un solo proveedor el que se mira el detalle-->
+                                    <tr>
+                                        <td>Razón Social: {{ proveedor.razon_social }}</td>
+                                        <td>RUC: {{ proveedor.ruc }}</td>
+                                        <td>Teléfono: {{ proveedor.telefono }}</td>
+                                        <td>Dirección: {{ proveedor.direccion }}</td>
+                                        <td>Tipo: {{ proveedor.get_tipo_display }}</td>
+                                        <td>Estado: {{ proveedor.get_estado_display }}</td>
+                                    </tr>
+                                    
+                                    
+                                    
+
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <h1 class="text-center my-3 lead">No hay proveedores</h1>
+                    {% endif %}
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-center my-4">
+                        <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example">
+
+                            <!-- volver -->
+                            <a href="{% url 'factura:pantalla_proveedor' %}" type="button" class="btn btn-outline-primary">
+                                <i class="fas fa-angle-double-left text-info"></i> Volver
+                            </a>
+
+                            <!-- editar -->
+                            <a href="{% url 'factura:editar_proveedor' proveedor.id %}" type="button" class="btn btn-outline-primary">
+                                <i class="fas fa-user-edit text-info"></i> Editar
+                            </a>
+                         
+                            <!-- eliminar -->
+                            <a href="{% url 'factura:eliminar_proveedor' proveedor.id %}" type="button" class="btn btn-outline-danger">
+                                <i class="fas fa-times text-danger"></i> Eliminar
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row d-flex justify-content-center">
+            <div class="col-8">
+                <h1 class="text-center my-5 lead">No tienes permiso para ver los detalles de los proveedores</h1>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
