@@ -8,6 +8,7 @@ from django.views import generic
 
 # Modelos
 from pacientes.models import Paciente, Turno
+from salarios.models import PagoSalario
 from productos.models import Pedido
 from usuarios.models import Usuario
 from .models import Filtro
@@ -57,13 +58,13 @@ class ListaPacientes(generic.ListView):
                 for turno in turnos:
                     paciente = Paciente.objects.get(id=turno.paciente.id)
                     pacientes.append(paciente)
-            elif q.filtro == 'Hicieron por lo menos un pedido en la semana/mes':
-                query_pacientes = q.filtro
-                pacientes.clear()
-                pedidos = Pedido.objects.filter(created_at__month=fecha_actual.month)
-                for pedido in pedidos:
-                    paciente = Paciente.objects.get(id=pedido.paciente.id)
-                    pacientes.append(paciente)
+            # elif q.filtro == 'Hicieron por lo menos un pedido en la semana/mes':
+            #     query_pacientes = q.filtro
+            #     pacientes.clear()
+            #     pedidos = Pedido.objects.filter(created_at__month=fecha_actual.month)
+            #     for pedido in pedidos:
+            #         paciente = Paciente.objects.get(id=pedido.paciente.id)
+            #         pacientes.append(paciente)
             elif q.filtro == 'Todos':
                 query_pacientes = 'Pacientes'
                 return pacientes
@@ -124,6 +125,43 @@ class ListaVentasPorMes(generic.ListView):
         contexto['form'] = FiltroMes
         return contexto 
 
+pagos = []
+
+
+class ListaPagosPorMes(generic.ListView):
+    template_name = 'clinica/reportes/pagos_salarios.html'
+    context_object_name = 'pagos'
+
+    def get_queryset(self):
+        pagos.clear()
+        mes = self.request.GET.get('meses')
+        fecha_actual = timezone.now().date()
+        pagos_salarios = PagoSalario.objects.all()
+        
+        if mes:
+            pagos_salarios = pagos_salarios.filter(fecha_pago__month=int(mes))
+        else:
+            pagos_salarios = pagos_salarios.filter(fecha_pago__month=fecha_actual.month)
+
+        for pago in pagos_salarios:
+            obj = {
+                'fecha_pago': pago.fecha_pago,
+                'empleados': pago.empleados.all(),
+                'salario_total': pago.salario_total
+            }
+            pagos.append(obj)
+        return pagos
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        mes_seleccionado = self.request.GET.get('meses') or timezone.now().month
+        form = FiltroMes(initial={'meses': mes_seleccionado})
+        contexto['mes_total'] = form.get_mes_nombre(mes_seleccionado)  # Obtiene el nombre del mes seleccionado
+        contexto['titulo'] = 'Pagos de Salarios'
+        #contexto['form'] = FiltroMes(initial={'meses': mes_seleccionado})  # Inicializa el formulario con el mes seleccionado
+        contexto['form'] = form
+        return contexto
+
 
 def descargarPDF(peticion):
     if peticion.method == 'GET':
@@ -136,6 +174,14 @@ def descargarPDF(peticion):
                 'titulo': f"Ventas del mes {mes}" 
             }
             pdf = generar_reporte_pdf(ListaVentasPorMes.template_name, contexto)
+        elif 'salarios' in ruta:
+            mes = ruta.split('=').pop()
+            contexto = {
+                'reporte': mes,
+                'pagos': pagos,
+                'titulo': f"Pagos de Salarios del mes {mes}"
+            }
+            pdf = generar_reporte_pdf(ListaPagosPorMes.template_name, contexto)
         else:
             contexto = {
                 'reporte': query_pacientes,

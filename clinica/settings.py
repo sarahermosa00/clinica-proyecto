@@ -46,6 +46,7 @@ LOCAL_APPS = [
     'pacientes.apps.PacientesConfig',
     'salarios.apps.SalariosConfig',
     'usuarios.apps.UsuariosConfig',
+    'caja_chica.apps.CajaChicaConfig',
     'compartido',
     'reportes'
 ]
@@ -118,6 +119,7 @@ DATABASES = {
     #'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -145,8 +147,7 @@ Validaciones de la clave
 
 LANGUAGE_CODE = 'es-ar'
 
-TIME_ZONE = 'America/Argentina/Cordoba'
-
+TIME_ZONE = 'America/Asuncion'
 USE_I18N = True
 
 USE_L10N = True

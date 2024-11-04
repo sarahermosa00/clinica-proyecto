@@ -52,7 +52,6 @@ class IniciarSesion(LoginView):
             elif grupo.name == ROL_OPCIONES[4][1]:  
                 # Venta
                 return reverse_lazy('productos:lista_pedidos')
-
             elif grupo.name == ROL_OPCIONES[5][1]:  
                 # Taller
                 return reverse_lazy('productos:lista_pedidos')
