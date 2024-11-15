@@ -19,81 +19,100 @@
     <div class="navbar-collapse offcanvas-collapse open bg-light text-center" id="navbarsExampleDefault">
       <ul class="navbar-nav mr-auto mb-2 mb-lg-0">
 
-        
-        {% if user|sector:"Medico" or user|sector:"Secretaria" or user|sector:"Gerencia" %}
-          <li class="nav-item active my-2">
-            <a class="nav-link" aria-current="page" href="{% url 'pacientes:lista' %}">
-              PACIENTES
-            </a>
-          </li>
-        {% endif %}
+        {% if user.is_authenticated %}
+          
+          {% if user|sector:"Medico" or user|sector:"Secretaria" or user|sector:"Gerencia" %}
+            <li class="nav-item active my-2">
+              <a class="nav-link" aria-current="page" href="{% url 'pacientes:lista' %}">
+                PACIENTES
+              </a>
+            </li>
+          {% endif %}
 
-        {% if user|sector:"Secretaria" or user|sector:"Gerencia" or user|sector:"Medico" %}
+          {% if user|sector:"Secretaria" or user|sector:"Gerencia" or user|sector:"Medico" %}
+            <li class="nav-item my-2">
+              <a class="nav-link" href="{% url 'pacientes:lista_turnos' %}">
+                TURNOS
+              </a>
+            </li>
+          {% endif %}
+          
+          {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
           <li class="nav-item my-2">
-            <a class="nav-link" href="{% url 'pacientes:lista_turnos' %}">
-              TURNOS
+            <a class="nav-link" href="{% url 'salarios:lista' %}">
+              EMPLEADOS
             </a>
           </li>
-        {% endif %}
-        
-        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
-        <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'salarios:lista' %}">
-            EMPLEADOS
-          </a>
-        </li>
-        {% endif %}
+          {% endif %}
 
-        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
-        <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'salarios:categorias' %}">
-            DEPARTAMENTOS
-          </a>
-        </li>
-        {% endif %}
+          {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+          <li class="nav-item my-2">
+            <a class="nav-link" href="{% url 'salarios:categorias' %}">
+              DEPARTAMENTOS
+            </a>
+          </li>
+          {% endif %}
 
-        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
-        <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'salarios:pantalla_salarios' %}">
-            SALARIOS
-          </a>
-        </li>
-        {% endif %}
+          {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+          <li class="nav-item my-2">
+            <a class="nav-link" href="{% url 'salarios:pantalla_salarios' %}">
+              SALARIOS
+            </a>
+          </li>
+          {% endif %}
 
-        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
-        <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'caja_chica:lista_movimientos' %}">
-            CAJA CHICA
-          </a>
-        </li>
-        {% endif %}
+          {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+          <li class="nav-item my-2">
+            <a class="nav-link" href="{% url 'caja_chica:lista_movimientos' %}">
+              CAJA CHICA
+            </a>
+          </li>
+          {% endif %}
 
-        {% if user|sector:"Gerencia" %}
-        <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'usuarios:lista' %}">
-            USUARIOS
-          </a>
-        </li>
+          {% if user|sector:"Gerencia" %}
+          <li class="nav-item my-2">
+            <a class="nav-link" href="{% url 'usuarios:lista' %}">
+              USUARIOS
+            </a>
+          </li>
 
-        <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'usuarios:actividades' %}">
-            HISTORIAL
-          </a>
-        </li>
-        <li class="nav-item my-2">
-          <div class="dropdown">
-            <button class="btn btn-transparent dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-              <span class="border-bottom border-warning border-3">Reportes</span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li><a class="dropdown-item" href="{% url 'reportes:pacientes' %}">Pacientes</a></li>
-              <li><a class="dropdown-item" href="{% url 'reportes:salarios' %}">Salarios</a></li>
-              <!-- <li><a class="dropdown-item" href="{% url 'reportes:ventas' %}">Ventas</a></li> -->
-            </ul>
-          </div>
-        </li>
-        {% endif %}
-      </ul>
+          <li class="nav-item my-2">
+            <a class="nav-link" href="{% url 'usuarios:actividades' %}">
+              HISTORIAL
+            </a>
+          </li>
+
+          {% endif %}
+
+          <li class="nav-item my-2">
+            <div class="dropdown">
+              <button class="btn btn-transparent dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
+                <span class="border-bottom border-warning border-3">Reportes</span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <!-- <li><a class="dropdown-item" href="{% url 'reportes:pacientes' %}">Pacientes</a></li>
+                <li><a class="dropdown-item" href="{% url 'reportes:salarios' %}">Salarios</a></li>
+                <li><a class="dropdown-item" href="{% url 'reportes:caja' %}">Caja Chica</a></li> -->
+                <!-- <li><a class="dropdown-item" href="{% url 'reportes:ventas' %}">Ventas</a></li> -->
+                <!-- Reporte de Pacientes accesible para Gerencia, Secretaria y Médico -->
+                {% if user|sector:"Gerencia" or user|sector:"Secretaria" or user|sector:"Medico" %}
+                  <li><a class="dropdown-item" href="{% url 'reportes:pacientes' %}">Pacientes</a></li>
+                {% endif %}
+
+                <!-- Reportes de Salarios y Caja Chica accesibles para Gerencia y Administración -->
+                {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+                  <li><a class="dropdown-item" href="{% url 'reportes:salarios' %}">Salarios</a></li>
+                  <li><a class="dropdown-item" href="{% url 'reportes:caja' %}">Caja Chica</a></li>
+                {% endif %}
+
+              </ul>
+            </div>
+          </li>
+
+        </ul>
+
+     {% endif %}
+
 
       <div class="ml-auto">
         {% if user.is_authenticated %}

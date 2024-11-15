@@ -45,7 +45,7 @@ class IniciarSesion(LoginView):
                 return reverse_lazy('pacientes:lista_turnos')
             elif grupo.name == ROL_OPCIONES[2][1]:  
                 # Gerencia
-                return reverse_lazy('productos:lista')
+                return reverse_lazy('salarios:lista')
             elif grupo.name == ROL_OPCIONES[3][1]: 
                  # Administracion 
                 return reverse_lazy('salarios:lista')
