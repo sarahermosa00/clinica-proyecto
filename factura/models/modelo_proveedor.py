@@ -57,7 +57,7 @@ class Proveedor(models.Model):
 
 
     def __str__(self):
-        return f"{self.razon_social} - {self.get_tipo_display()} - {self.get_estado_display()}"
+        return f"{self.razon_social} - {self.ruc}"
     
     """el display obtiene los valores que estan por defecto """
     

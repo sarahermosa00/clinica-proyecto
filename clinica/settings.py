@@ -183,3 +183,9 @@ LOGIN_URL = '/usuarios/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/usuarios/'
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+
+
+# -------------------------------------------
+# Añadido el default autofield porque no reconoce bien los id
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -23,6 +23,7 @@
                                     <th>Nombre</th>
                                     <th>Precio</th>
                                     <th>Codigo</th>
+                                    <th>Estado</th>
                                     
                                 </tr>
                             </thead>
@@ -31,9 +32,10 @@
                             <tbody>
                             
                                 <tr>
-                                    <td>Nombre: {{ objeto.nombre_objeto }}</td>
-                                    <td>Precio: {{ objeto.precio_objeto }}</td>
-                                    <td>Codigo: {{ objeto.codigo_objeto }}</td>
+                                    <td>{{ objeto.nombre_objeto }}</td>
+                                    <td>{{ objeto.precio_objeto }}</td>
+                                    <td>{{ objeto.codigo_objeto }}</td>
+                                    <td>{{ objeto.get_estado_objeto_display }}</td>
                                    
                                 </tr>
                                 
@@ -56,6 +58,11 @@
                                 <i class="fas fa-angle-double-left text-info"></i> Volver
                             </a> 
 
+
+                            <!-- editar -->
+                            <a href="{% url 'factura:editar_objeto' objeto.id %}" type="button" class="btn btn-outline-primary">
+                                <i class="fas fa-user-edit text-info"></i> Editar
+                            </a>
                          
                             
                         </div>

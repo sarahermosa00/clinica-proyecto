@@ -1,10 +1,10 @@
 {% extends 'layout.html' %}
 {% load usuarios_tags %} 
 
-{% load custom_filters %}
 
 {% block content %}
     {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+        
         <div class="row d-flex justify-content-center">
             <div class="col-sm-10 ">
                 <div class="my-3 p-3 bg-white rounded shadow-lg">
@@ -33,12 +33,12 @@
                                 <tbody>
                                     <!-- no es iterable porque se quiere mostrar nada mas ya que el detalle se da sobre un objeto no sobre una lista, es un solo proveedor el que se mira el detalle-->
                                     <tr>
-                                        <td>Razón Social: {{ proveedor.razon_social }}</td>
-                                        <td>RUC: {{ proveedor.ruc }}</td>
-                                        <td>Teléfono: {{ proveedor.telefono }}</td>
-                                        <td>Dirección: {{ proveedor.direccion }}</td>
-                                        <td>Tipo: {{ proveedor.get_tipo_display }}</td>
-                                        <td>Estado: {{ proveedor.get_estado_display }}</td>
+                                        <td>{{ proveedor.razon_social }}</td>
+                                        <td>{{ proveedor.ruc }}</td>
+                                        <td>{{ proveedor.telefono }}</td>
+                                        <td>{{ proveedor.direccion }}</td>
+                                        <td>{{ proveedor.get_tipo_display }}</td>
+                                        <td>{{ proveedor.get_estado_display }}</td>
                                     </tr>
                                     
                                     
@@ -73,6 +73,7 @@
                         </div>
                     </div>
                 </div>
+                {% include 'componentes/paginacion.html' %}
             </div>
         </div>
     {% else %}

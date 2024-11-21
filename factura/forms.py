@@ -5,8 +5,9 @@ from .models import *
 
 from factura.models.modelo_proveedor import Proveedor
 from factura.models.modelo_objeto import ObjetoFactura
+from factura.models.modelo_factura import Factura, DetalleFactura
 
-
+# -------------------------Formulario proveedor--------------------------------   
 class FormularioProveedor(ModelForm):
     """Se tiene que llamar como la clase de mi modelo de donde quiero hacer el formulario
     django maneja solo el tema de los formularios, solo deberia especificar los que son choices, los demas si se quiere añadirle estilos css 
@@ -65,7 +66,7 @@ class FormularioProveedor(ModelForm):
 
 
 
-
+# --------------------------Formulario objeto--------------------------------
 
 class FormularioObjeto(ModelForm):
 
@@ -73,7 +74,79 @@ class FormularioObjeto(ModelForm):
         model = ObjetoFactura
         fields = '__all__'
 
+            
+    estado_objeto = ChoiceField(
+        choices=ObjetoFactura.ESTADO_OBJETO_OPCIONES,
+        label='Estado',
+        widget=forms.Select(attrs={'class': 'form-control rounded-pill'}),
+    )
+    
     
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+
+
+
+# --------------------------Formulario factura--------------------------------  
+
+
+class FormularioFactura(ModelForm):
+
+
+    class Meta:
+        model = Factura
+        fields = ['cliente_proveedor', 'inicio_validez_timbrado', 'fin_validez_timbrado']
+
+    cliente_proveedor = forms.ModelChoiceField(
+        queryset=Proveedor.objects.all(),
+        label="Proveedor",
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        to_field_name="razon_social"
+    )
+    
+
+
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+
+
+
+# --------------------------Formulario detalle--------------------------------
+
+
+class FormularioDetalleFactura(ModelForm):
+    class Meta:
+        model = DetalleFactura 
+        fields = ['objeto', 'precio', 'cantidad']
+
+
+    objeto = forms.ModelChoiceField(
+    queryset=ObjetoFactura.objects.all(),
+    label="Objeto",
+    widget=forms.Select(attrs={'class': 'form-control'}),
+)
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+
+# --------------formset-----------
+
+DetalleFacturaFormSet = forms.models.inlineformset_factory(
+    Factura,
+    DetalleFactura,
+    form=FormularioDetalleFactura,
+    extra=1,
+    can_delete=True
+)
+
+
+

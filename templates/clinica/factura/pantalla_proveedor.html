@@ -1,10 +1,13 @@
 {% extends 'layout.html' %}
 {% load usuarios_tags %} 
 {% load custom_filters %}
+{% load static %} 
+
+{% load custom_filters %}
 
 {% block content %}
     {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
-    {% include 'componentes/buscar_form.html' %}
+        {% include 'componentes/buscar_form.html' %}
 
     <h1>Proveedores</h1>
 
@@ -22,7 +25,7 @@
                     </div>
                     <div class="col-6">
                         <div class="d-grid gap-2 col-6 mx-auto">
-                            <!-- Botón para generar un nuevo pago de salario -->
+                            <!-- Botón para generar uno nuevo  -->
                             <a type="button" class="btn btn-warning text-dark btn-sm" href="{% url 'factura:agregar_proveedor' %}">
                                 <i class="fas fa-plus text-dark"></i>
                                 Generar Proveedor
@@ -44,6 +47,7 @@
                                     <th>Tipo</th> -->
                                     <th>Acciones</th>
                                 </tr>
+
                             </thead>
                             <tbody>
                                 {% for proveedor in proveedores %}
@@ -55,10 +59,15 @@
                                         <a href="{% url 'factura:detalle_proveedores' pk=proveedor.id%}" class="btn btn-primary btn-sm">Ver Detalle</a>
                                     </td>
                                 </tr>
-                                {% endfor %}
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center">No existencias/td>
+                                </tr>
+                                {% endfor %}    
                             </tbody>
                         </table>
                     </div>
+                    
                 {% else %}
                     <h1 class="text-center my-3 lead">No hay proveedores registrados</h1>
                 {% endif %}

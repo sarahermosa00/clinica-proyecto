@@ -76,13 +76,13 @@
         </li>
         {% endif %}
 
-        <!-- {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
         <li class="nav-item my-2">
-          <a class="nav-link" href="{% url 'factura:pantalla_objetos' %}">
+          <a class="nav-link" href="{% url 'factura:pantalla_factura' %}">
             FACTURA
           </a>
         </li>
-        {% endif %} -->
+        {% endif %}
 
 
         {% if user|sector:"Gerencia" %}

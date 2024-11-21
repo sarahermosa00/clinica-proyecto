@@ -9,27 +9,27 @@ from usuarios.models import registrarActividad
 
 from ..forms import FormularioProveedor
 
-
-
-
+# ---------panalla principal de proveedores------------
 class PantallaProveedor(LoginRequiredMixin, generic.TemplateView):
     template_name = 'clinica/factura/pantalla_proveedor.html'
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
-
-       # En el futuro filtrar por ruc y razon social
-
-        # Filtrar los pagos por mes y año si están presentes
+        # para buscar hay que colocar obtener el query y de donde, en este caso la url, que como esta vacioo es ahi mismo donde buscamos
+        query = self.request.GET.get('query', '') 
         proveedores = Proveedor.objects.all()
-
-        # Agregar los pagos filtrados al contexto
-        contexto['proveedores'] =proveedores.order_by('-razon_social')
+        if query:  
+            proveedores = proveedores.filter(
+                Q(razon_social__icontains=query) |  
+                Q(ruc__icontains=query)            
+            )
+        contexto['proveedores'] = proveedores.order_by('-razon_social')
+        contexto['query'] = query  
 
         return contexto
 
 
-# -------------------------------------detalle-------------
+# -------------------pantalla a la cual va cuando le doy a detalles--------------------
 
 class DetallaProveedor(LoginRequiredMixin, generic.DetailView):
     # aca hereda de LoginRequiredMixin y generic.DeleteView
@@ -38,6 +38,10 @@ class DetallaProveedor(LoginRequiredMixin, generic.DetailView):
     template_name = 'clinica/factura/detalle_proveedores.html'
     context_object_name = 'proveedor'  
     # context_object_name es el nombre que se usa en el html 
+    paginate_by = 5   
+    # para que muestre 5 resultados por pagina
+
+
 
     def get_context_data(self, **kwargs):
 
@@ -48,6 +52,7 @@ class DetallaProveedor(LoginRequiredMixin, generic.DetailView):
         contexto['direccion'] = self.object.direccion
         contexto['tipo'] = self.object.tipo
         contexto['estado'] = self.object.estado
+      
 
 
         return contexto
@@ -105,7 +110,7 @@ class Editar(LoginRequiredMixin, generic.UpdateView):
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
-        contexto['titulo'] = f'Editar a {self.object}'
+        contexto['titulo'] = f'Editar a {self.object.razon_social}'
         contexto['editar'] = True
         return contexto
 

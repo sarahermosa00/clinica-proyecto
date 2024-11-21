@@ -40,6 +40,8 @@ class DetalleObjeto(LoginRequiredMixin, generic.DetailView):
         contexto['nombre_objeto'] = self.object.nombre_objeto
         contexto['codigo_objeto'] = self.object.codigo_objeto
         contexto['precio_objeto'] = self.object.precio_objeto
+        contexto['estado_objeto'] = self.object.estado_objeto
+        
         
 
         return contexto
@@ -66,3 +68,37 @@ class AgregarObjeto(LoginRequiredMixin, generic.CreateView):
 
 
 # --------------editar------------------------------------
+class EditarObjeto(LoginRequiredMixin, generic.UpdateView):
+    model = ObjetoFactura
+    form_class = FormularioObjeto
+    # el editar debe estar en el mismo donde se hace el create
+    template_name = 'clinica/factura/form_create_objeto.html'
+
+
+
+    def get_success_url(self):
+        registrarActividad(
+            self.request,
+            'Se modifico un objeto'
+        )
+        messages.success(
+            self.request,
+            'Objeto modificado'
+        )
+
+
+        ruta = self.request.META['HTTP_REFERER']
+        objeto_uuid = ruta.split('/').pop()
+        return reverse_lazy('factura:detalle_objetos', kwargs={'pk':objeto_uuid})
+
+
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        #aca si solo se le pone editar al self.object trae toda la representacion del objeto, por eso le especifico un atributo que en este caso es su nombre para que sea el que se muestre
+        contexto['titulo'] = f'Editar a {self.object.nombre_objeto}'
+        contexto['editar'] = True
+        return contexto
+    
+
+#-----------------------Eliminar-------------------------
