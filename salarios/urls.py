@@ -26,6 +26,8 @@ URLS_SALARIOS = [
     path('salarios/listar/', salarios.ListarPagosSalarios.as_view(), name='listar_pagos'),
     path('salarios/detalle/<uuid:pk>/', salarios.DetallePagoSalario.as_view(), name='detalle_pago_salario'),
     path('salarios/exportar/<uuid:pk>/', salarios.exportar_pago_xlsx, name='exportar_xlsx'),
+    path('salarios/exportarpdf/<uuid:pk>/', salarios.exportar_pago_pdf, name='exportar_pdf'),
+
 ]
 
 urlpatterns = URLS_EMPLEADOS + URLS_CATEGORIAS + URLS_SALARIOS

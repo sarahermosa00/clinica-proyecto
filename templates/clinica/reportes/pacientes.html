@@ -1,15 +1,15 @@
-{% extends 'base.html' %}
+{% extends 'layout.html' %}
 {% load usuarios_tags %} 
 
-{% block aplicacion %}
+{% block content %}
     <div class="container">
         {% if not reporte %}
             <div class="row">
                 <div class="col-sm-6">
                     <h1 class="text-center border-bottom border-primary border-3 mt-3">
-                        <a href="{% url 'pacientes:lista' %}" style="text-decoration: none;">
+                        <!-- <a href="{% url 'pacientes:lista' %}" style="text-decoration: none;">
                             <i class="fas fa-angle-double-left text-primary"></i>
-                        </a>
+                        </a> -->
                         {{titulo}}
                     </h1>
                 </div>
@@ -36,7 +36,7 @@
                 <h3 class="text-center my-3 bg-warning">{{reporte}}</h3>
             {% endif %}
             <table class="table table-bordered">
-                <thead class="bg-verde bg-gradient">
+                <thead class="bg-verde bg-success">
                     <tr class="">
                         <th>Nombre</th>
                         <th>Apellido</th>
@@ -59,7 +59,7 @@
                                 <td>No dio email</td>
                             {% endif %}
                             {% if paciente.medico %}
-                                <td>{{paciente.medico}}</td>
+                                <td>{{paciente.medico|upper}}</td>
                             {% else %}
                                 <td>Sin asignar</td>
                             {% endif %}

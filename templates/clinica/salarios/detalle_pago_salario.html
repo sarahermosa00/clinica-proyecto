@@ -63,6 +63,10 @@
                             <a href="{% url 'salarios:exportar_xlsx' pago.id %}" class="btn btn-outline-primary">
                                 <i class="fas fa-file-excel text-info"></i> Exportar a XLSX
                             </a>
+                            <!-- Botón de exportar a XLSX -->
+                            <a href="{% url 'salarios:exportar_pdf' pago.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-file-pdf text-info"></i> Exportar a PDF
+                            </a>
                         </div>
                     </div>
                 </div>

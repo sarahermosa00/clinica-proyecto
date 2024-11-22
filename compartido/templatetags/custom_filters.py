@@ -10,3 +10,11 @@ def formato_guaranies(value):
         return f"{value:,.0f} Gs".replace(",", ".")  # Usa puntos como separadores de miles
     except (ValueError, TypeError):
         return value
+
+@register.filter
+def sum_entrada(movimientos):
+    return sum(movimiento.monto for movimiento in movimientos if movimiento.tipo == 'entrada')
+
+@register.filter
+def sum_salida(movimientos):
+    return sum(movimiento.monto for movimiento in movimientos if movimiento.tipo == 'salida')
