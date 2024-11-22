@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+<h2>Pagos de Salarios</h2>
+
+<!-- Formulario para filtrar por mes y año -->
+<form method="get" class="mb-3">
+    <div class="form-row">
+        <div class="col-md-3">
+            <label for="mes">Mes</label>
+            <select name="mes" id="mes" class="form-control">
+                {% for m in 1|times:12 %}
+                <option value="{{ m }}" {% if mes_actual == m %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="anho">Año</label>
+            <select name="anho" id="anho" class="form-control">
+                {% for year in 2020|times:10 %}
+                <option value="{{ year }}" {% if anho_actual == year %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2 align-self-end">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </div>
+</form>
+
+<!-- Tabla de pagos de salarios -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>Empleados</th>
+            <th>Fecha de Pago</th>
+            <th>Salario Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pago in pagos %}
+        <tr>
+            <td>
+                <!-- Lista de empleados asociados a cada pago -->
+                {% for empleado in pago.empleados.all %}
+                    {{ empleado.nombre }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </td>
+            <td>{{ pago.fecha_pago }}</td>
+            <td>{{ pago.salario_total }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

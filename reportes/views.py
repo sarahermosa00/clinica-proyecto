@@ -8,6 +8,8 @@ from django.views import generic
 
 # Modelos
 from pacientes.models import Paciente, Turno
+from salarios.models import PagoSalario
+from caja_chica.models import MovimientoCajaChica
 from productos.models import Pedido
 from usuarios.models import Usuario
 from .models import Filtro
@@ -57,13 +59,13 @@ class ListaPacientes(generic.ListView):
                 for turno in turnos:
                     paciente = Paciente.objects.get(id=turno.paciente.id)
                     pacientes.append(paciente)
-            elif q.filtro == 'Hicieron por lo menos un pedido en la semana/mes':
-                query_pacientes = q.filtro
-                pacientes.clear()
-                pedidos = Pedido.objects.filter(created_at__month=fecha_actual.month)
-                for pedido in pedidos:
-                    paciente = Paciente.objects.get(id=pedido.paciente.id)
-                    pacientes.append(paciente)
+            # elif q.filtro == 'Hicieron por lo menos un pedido en la semana/mes':
+            #     query_pacientes = q.filtro
+            #     pacientes.clear()
+            #     pedidos = Pedido.objects.filter(created_at__month=fecha_actual.month)
+            #     for pedido in pedidos:
+            #         paciente = Paciente.objects.get(id=pedido.paciente.id)
+            #         pacientes.append(paciente)
             elif q.filtro == 'Todos':
                 query_pacientes = 'Pacientes'
                 return pacientes
@@ -124,18 +126,116 @@ class ListaVentasPorMes(generic.ListView):
         contexto['form'] = FiltroMes
         return contexto 
 
+pagos = []
+
+
+class ListaPagosPorMes(generic.ListView):
+    template_name = 'clinica/reportes/pagos_salarios.html'
+    context_object_name = 'pagos'
+
+    def get_queryset(self):
+        pagos.clear()
+        mes = self.request.GET.get('meses')
+        fecha_actual = timezone.now().date()
+        pagos_salarios = PagoSalario.objects.all()
+        
+        if mes:
+            pagos_salarios = pagos_salarios.filter(fecha_pago__month=int(mes))
+        else:
+            pagos_salarios = pagos_salarios.filter(fecha_pago__month=fecha_actual.month)
+
+        for pago in pagos_salarios:
+            obj = {
+                'fecha_pago': pago.fecha_pago,
+                'empleados': pago.empleados.all(),
+                'salario_total': pago.salario_total
+            }
+            pagos.append(obj)
+        return pagos
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        mes_seleccionado = self.request.GET.get('meses') or timezone.now().month
+        form = FiltroMes(initial={'meses': mes_seleccionado})
+        contexto['mes_total'] = form.get_mes_nombre(mes_seleccionado)  # Obtiene el nombre del mes seleccionado
+        contexto['titulo'] = 'Pagos de Salarios'
+        #contexto['form'] = FiltroMes(initial={'meses': mes_seleccionado})  # Inicializa el formulario con el mes seleccionado
+        contexto['form'] = form
+        return contexto
+    
+movimientos = []
+
+class ListaMovimientosCajaPorMes(generic.ListView):
+    template_name = 'clinica/reportes/movimientos_caja.html'
+    context_object_name = 'movimientos'
+
+    def get_queryset(self):
+        movimientos.clear()
+        mes = self.request.GET.get('meses')
+        fecha_actual = timezone.now().date()
+        movimientos_caja = MovimientoCajaChica.objects.all()
+
+        if mes:
+            movimientos_caja = movimientos_caja.filter(fecha__month=int(mes))
+        else:
+            movimientos_caja = movimientos_caja.filter(fecha__month=fecha_actual.month)
+
+        for movimiento in movimientos_caja:
+            obj = {
+                'fecha': movimiento.fecha,
+                'concepto': movimiento.concepto,
+                'tipo': movimiento.get_tipo_display(),
+                'monto': movimiento.monto
+            }
+            movimientos.append(obj)
+        return movimientos
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        mes_seleccionado = self.request.GET.get('meses') or timezone.now().month
+        form = FiltroMes(initial={'meses': mes_seleccionado})
+        contexto['mes_total'] = form.get_mes_nombre(mes_seleccionado)
+        contexto['titulo'] = 'Movimientos de Caja Chica'
+        contexto['form'] = form
+        return contexto
+
 
 def descargarPDF(peticion):
     if peticion.method == 'GET':
         ruta = peticion.META.get('HTTP_REFERER')
+
+        if 'meses=' in ruta:
+            mes = int(ruta.split('meses=')[-1].split('&')[0]) 
+        else:
+            mes = timezone.now().month
+
+        nombres_meses = {
+            1: "Enero", 2: "Febrero", 3: "Marzo", 4: "Abril", 5: "Mayo", 6: "Junio",
+            7: "Julio", 8: "Agosto", 9: "Septiembre", 10: "Octubre", 11: "Noviembre", 12: "Diciembre"
+        }
+        nombre_mes = nombres_meses[mes]
+
         if 'ventas' in ruta:
-            mes = ruta.split('=').pop()
             contexto = {
-                'reporte': mes,
+                'reporte': nombre_mes,
                 'ventas': ventas,
-                'titulo': f"Ventas del mes {mes}" 
+                'titulo': f"Ventas del mes {nombre_mes}" 
             }
             pdf = generar_reporte_pdf(ListaVentasPorMes.template_name, contexto)
+        elif 'salarios' in ruta:
+            contexto = {
+                'reporte': nombre_mes,
+                'pagos': pagos,
+                'titulo': f"Pagos de Salarios del mes {nombre_mes}"
+            }
+            pdf = generar_reporte_pdf(ListaPagosPorMes.template_name, contexto)
+        elif 'caja' in ruta: 
+            contexto = {
+                'reporte': nombre_mes,
+                'movimientos': movimientos,
+                'titulo': f"Movimientos de Caja Chica del mes {nombre_mes}"
+            }
+            pdf = generar_reporte_pdf(ListaMovimientosCajaPorMes.template_name, contexto)
         else:
             contexto = {
                 'reporte': query_pacientes,

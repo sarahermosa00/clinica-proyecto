@@ -8,4 +8,4 @@ from .models import *
 class AplicacionAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
 
-admin.site.register(Categoria)
+#admin.site.register(Categoria)

@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 from django.contrib.messages import constants as messages
+from dotenv import load_dotenv
+import os
+import dj_database_url 
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +31,8 @@ SECRET_KEY = 'l#@pu_m^4tle$5kl)khq54cl#ntc8n_b&)**kqd65d44%e!=h)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['18.222.3.214', 'localhost', '127.0.0.1']
+# CSRF_TRUSTED_ORIGINS = ['http://*', 'https://clinica-proyecto-production.up.railway.app']
 
 
 # Application definition
@@ -38,9 +44,12 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     'productos.apps.ProductosConfig',
     'pacientes.apps.PacientesConfig',
+    'salarios.apps.SalariosConfig',
     'usuarios.apps.UsuariosConfig',
+    'caja_chica.apps.CajaChicaConfig',
     'compartido',
-    'reportes'
+    'reportes',
+    'factura'
 ]
 
 DEV_APPS = [
@@ -55,6 +64,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
 ] + THIRD_PARTY_APPS + LOCAL_APPS
 
 if DEBUG:
@@ -68,6 +78,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'clinica.urls'
@@ -98,15 +110,17 @@ WSGI_APPLICATION = 'clinica.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'clinica',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '5432',
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': 'clinica',
+       'USER': 'postgres',
+       'PASSWORD': '1234',
+       'HOST': 'localhost',
+       'PORT': '5432',
     }
+    # 'default': dj_database_url.config(default=os.getenv('DATABASE_URL'
 }
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -134,8 +148,7 @@ Validaciones de la clave
 
 LANGUAGE_CODE = 'es-ar'
 
-TIME_ZONE = 'America/Argentina/Cordoba'
-
+TIME_ZONE = 'America/Asuncion'
 USE_I18N = True
 
 USE_L10N = True
@@ -151,6 +164,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
+STATICFILES_STORAGE="whitenoise.storage.CompressedStaticFilesStorage"
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
@@ -169,3 +186,9 @@ LOGIN_URL = '/usuarios/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/usuarios/'
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+
+
+# -------------------------------------------
+# Añadido el default autofield porque no reconoce bien los id
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

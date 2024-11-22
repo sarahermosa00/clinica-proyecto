@@ -1,0 +1,86 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %} 
+{% load custom_filters %}
+
+{% block content %}
+    <div class="container">
+        {% if not reporte %}
+            <div class="row">
+                <div class="col-sm-6">
+                    <h1 class="text-center border-bottom border-primary border-3 mt-3">
+                        <!-- <a href="{% url 'pacientes:lista' %}" style="text-decoration: none;">
+                            <i class="fas fa-angle-double-left text-primary"></i>
+                        </a> -->
+                        {{titulo}}
+                    </h1>
+                </div>
+                <div class="col-sm-6 my-4">
+                    <form class="d-flex align-items-end">
+                        <div class="col-6">
+                            {{form}}
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-dark text-white mx-2">
+                                Filtrar
+                            </button>
+                            <a href="{% url 'reportes:descargar' %}" class="btn btn-warning rounded">
+                                <i class="fas fa-file-download text-dark"></i> 
+                                <span class="text-dark">Descargar</span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        {% endif %}
+        <div class="row">
+            {% if reporte %}
+                <h3 class="text-center my-3 bg-warning">{{titulo}}</h3>
+            {% endif %}
+
+            {% if pagos %}
+                <table class="table table-bordered width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;" >
+                    <thead class="bg-verde bg-success" >
+                        <tr style="background-color: #9DC88D; color: black;">
+                            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Fecha de Pago</th>
+                            <th style="text-align: center; border: 1px solid #ddd;">Empleados</th>
+                            <th style="padding: 8px; text-align: center; border: 1px solid #ddd;">Total Pagado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for pago in pagos %}
+                            <tr>
+                                <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">
+                                    {{pago.fecha_pago}}
+                                </td>
+                                <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">
+                                {% if pago.empleados.exists %}
+                                    <ul style="padding-left: 20px; margin: 0; list-style-type: none;">
+                                        {% for empleado in pago.empleados.all %}
+                                            <li>{{ empleado.nombre }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    Sin empleados
+                                {% endif %}
+                                </td>
+                                {% if pago.salario_total %}
+                                    <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">
+                                        {{pago.salario_total|formato_guaranies}}
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        0 gs
+                                    </td>
+                                {% endif %}
+                            </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                    Sin pagos en el mes de {{ mes_total|upper }}
+                {%endif%}
+        </div>
+    </div>
+{% endblock %}
+

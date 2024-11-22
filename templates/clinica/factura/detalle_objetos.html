@@ -1,0 +1,80 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %} 
+
+{% load custom_filters %}
+
+{% block content %}
+    {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-10 ">
+                <div class="my-3 p-3 bg-white rounded shadow-lg">
+                    <h5 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6"><strong> Detalle de Objetos </strong></h6>
+
+          
+                    <!-- Lista de todos los objetos -->
+                    <h6 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6">Objetos encontrados</h6>
+                    {% if objeto %}
+
+                    <!-- esta parte es el titulo de la tabla -->
+                    <div class="table-responsive my-3">
+                        <table class="table table-hover table-bordered">
+                            <thead class="table-warning">
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Precio</th>
+                                    <th>Codigo</th>
+                                    <th>Estado</th>
+                                    
+                                </tr>
+                            </thead>
+
+                            <!-- contenido de la tabla -->
+                            <tbody>
+                            
+                                <tr>
+                                    <td>{{ objeto.nombre_objeto }}</td>
+                                    <td>{{ objeto.precio_objeto }}</td>
+                                    <td>{{ objeto.codigo_objeto }}</td>
+                                    <td>{{ objeto.get_estado_objeto_display }}</td>
+                                   
+                                </tr>
+                                
+                                
+                                
+
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                        <h1 class="text-center my-3 lead">No hay Objetos</h1>
+                    {% endif %}
+
+                    <!-- Botones de acción -->
+                     <div class="d-flex justify-content-center my-4">
+                        <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example"> 
+
+                            <!-- volver -->
+                            <a href="{% url 'factura:pantalla_objetos' %}" type="button" class="btn btn-outline-primary">
+                                <i class="fas fa-angle-double-left text-info"></i> Volver
+                            </a> 
+
+
+                            <!-- editar -->
+                            <a href="{% url 'factura:editar_objeto' objeto.id %}" type="button" class="btn btn-outline-primary">
+                                <i class="fas fa-user-edit text-info"></i> Editar
+                            </a>
+                         
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="row d-flex justify-content-center">
+            <div class="col-8">
+                <h1 class="text-center my-5 lead">No tienes permiso para ver los detalles de los proveedores</h1>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

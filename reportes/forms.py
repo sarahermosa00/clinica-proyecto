@@ -38,3 +38,7 @@ class FiltroMes(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['meses'].widget.attrs['class'] = 'form-control mt-2 rounded'
+    
+    def get_mes_nombre(self, mes_value):
+        # Obtiene el nombre del mes correspondiente al valor
+        return dict(self.MESES).get(int(mes_value)) if mes_value else None

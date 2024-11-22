@@ -18,7 +18,8 @@ class Observacion(ModeloBase):
 
     )
     especialidad = models.CharField(
-        verbose_name="Especialidad", 
+        verbose_name="Especialidad",
+        max_length=50, 
         blank=True,
         choices=especialidad_choices,
         default='Fisioterapia',

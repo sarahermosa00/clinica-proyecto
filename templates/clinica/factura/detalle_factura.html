@@ -1,0 +1,100 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %}
+{% load widget_tweaks %}
+{% load static %}
+{% load custom_filters %}
+
+
+
+{% block content %}
+    {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+        
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-10 ">
+                <div class="my-3 p-3 bg-white rounded shadow-lg">
+                    <h5 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6"><strong> Detalle de Facturas</strong></h6>
+
+          
+
+                    <!-- Información de la factura -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Información de la Factura
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Fecha de Emisión:</strong> {{ factura.fecha_emision }}</p>
+                            <p><strong>Cliente:</strong> {{ factura.cliente_proveedor }}</p>
+                            <p><strong>Timbrado:</strong> {{ factura.timbrado }}</p>
+                            <p><strong>Inicio de Validez:</strong> {{ factura.inicio_validez_timbrado }}</p>
+                            <p><strong>Fin de Validez:</strong> {{ factura.fin_validez_timbrado }}</p>
+                            <p><strong>Estado:</strong> {{ factura.get_estado_factura_opciones_display }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Detalles de la factura -->
+                    <h2>Productos de la Factura</h2>
+                    <table class="table table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Numero factura</th>
+                                <th>Codigo - Producto</th>
+                                <th>Precio Unitario</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detalle in detalle_factura %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ detalle.objeto }}</td>
+                                    <td>${{ detalle.precio }}</td>
+                                    <td>{{ detalle.cantidad }}</td>
+                                    <td>${{ detalle.precio|floatformat:2|add:detalle.cantidad|floatformat:2 }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="5">No hay productos asociados a esta factura.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" class="text-end">Subtotal:</th>
+                            <td>GS{{ subtotal|floatformat:2 }}</td>
+                        </tr><br>
+                        <tr>
+                            <th colspan="4" class="text-end">IVA (10%):</th>
+                            <td>GS{{ iva|floatformat:2 }}</td>
+                        </tr><br>
+                        <tr>
+                            <th colspan="4" class="text-end">Total con IVA:</th>
+                            <td>GS{{ total_con_iva|floatformat:2 }}</td>
+                        </tr><br>
+                    </tfoot>
+                    
+
+                    {% else %}
+                        <h1 class="text-center my-3 lead">No hay facturas</h1>
+                    {% endif %}
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-center my-4">
+                        <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example">
+
+                            <!-- volver -->
+                            <a href="{% url 'factura:pantalla_factura' %}" type="button" class="btn btn-outline-primary">
+                                <i class="fas fa-angle-double-left text-info"></i> Volver
+                            </a>
+                            
+                        </div>
+                    </div>
+                </div>
+                {% include 'componentes/paginacion.html' %}
+            </div>
+        </div>
+
+{% endblock %}

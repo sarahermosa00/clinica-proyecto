@@ -8,16 +8,16 @@ from django.db import models
 from compartido.modelo_base import ModeloBase
 
 
-class Categoria(models.Model):
-    nombre = models.CharField(max_length=250, verbose_name="Nombre de la categoria")
+# class Categoria(models.Model):
+#     nombre = models.CharField(max_length=250, verbose_name="Nombre de la categoria")
 
-    class Meta:
-        db_table = "categoria"
-        verbose_name = "Categoria"
-        verbose_name_plural = "Categorias"
+#     class Meta:
+#         db_table = "categoria"
+#         verbose_name = "Categoria"
+#         verbose_name_plural = "Categorias"
 
-    def __str__(self):
-        return self.nombre
+#     def __str__(self):
+#         return self.nombre
 
 
 class Producto(ModeloBase):
@@ -40,13 +40,13 @@ class Producto(ModeloBase):
     precio = models.DecimalField(max_digits=14, decimal_places=2, default=0.0, verbose_name="Precio")
     imagen = models.ImageField(upload_to='productos/img/', blank=True, null=True, verbose_name="Imagen del producto")
     stock = models.PositiveIntegerField(blank=True, null=True, verbose_name="Cantidad", default=1)
-    categoria = models.ForeignKey(
-        Categoria, 
-        on_delete=models.CASCADE, 
-        blank=True,
-        null=True,
-        verbose_name="Categoria",
-        )
+    # categoria = models.ForeignKey(
+    #     Categoria, 
+    #     on_delete=models.CASCADE, 
+    #     blank=True,
+    #     null=True,
+    #     verbose_name="Categoria",
+    #     )
     armazon = models.BooleanField(default=False, verbose_name="Armazon")
     lente = models.BooleanField(default=False, verbose_name="Es un lente")
     lado = models.CharField(

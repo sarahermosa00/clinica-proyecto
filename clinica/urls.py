@@ -7,8 +7,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('productos/', include('productos.urls')),
     path('pacientes/', include('pacientes.urls')),
+    path('salarios/', include('salarios.urls')),
+    path('factura/', include('factura.urls')),
     path('usuarios/', include('usuarios.urls')),
     path('reportes/', include('reportes.urls')),
+    path('caja_chica/', include('caja_chica.urls')),
     path('', include('compartido.urls'))
 ]
 

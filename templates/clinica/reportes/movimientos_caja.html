@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %} 
+{% load custom_filters %}
+
+{% block content %}
+    <div class="container">
+        {% if not reporte %}
+            <div class="row">
+                <div class="col-sm-6">
+                    <h1 class="text-center border-bottom border-primary border-3 mt-3">
+                        {{titulo}}
+                    </h1>
+                </div>
+                <div class="col-sm-6 my-4">
+                    <form class="d-flex align-items-end">
+                        <div class="col-6">
+                            {{form}}
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-dark text-white mx-2">
+                                Filtrar
+                            </button>
+                            <a href="{% url 'reportes:descargar' %}" class="btn btn-warning rounded">
+                                <i class="fas fa-file-download text-dark"></i> 
+                                <span class="text-dark">Descargar</span>
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        {% endif %}
+        <div class="row">
+            {% if reporte %}
+                <h3 class="text-center my-3 bg-warning">{{titulo}}</h3>
+            {% endif %}
+
+            {% if movimientos %}
+                <table class="table table-bordered" style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif;">
+                    <thead class="bg-success" style="background-color: #9DC88D; color: black;">
+                        <tr>
+                            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Fecha</th>
+                            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Concepto</th>
+                            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Tipo</th>
+                            <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for movimiento in movimientos %}
+                        <tr>
+                            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">
+                                {{ movimiento.fecha|date:"j M. Y" }}
+                            </td>
+                            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">
+                                {{ movimiento.concepto }}
+                            </td>
+                            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">
+                                {{ movimiento.tipo }}
+                            </td>
+                            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">
+                                {{ movimiento.monto|formato_guaranies }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-center">Sin movimientos en el mes de {{ mes_total|upper }}</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

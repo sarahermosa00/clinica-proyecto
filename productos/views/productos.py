@@ -6,7 +6,7 @@ from django.db.models import Sum, Q
 from django.views import generic
 
 # Modelos
-from ..models import Producto, Categoria
+from ..models import Producto #Categoria
 from usuarios.models import registrarActividad
 
 # Formularios
@@ -40,7 +40,7 @@ class Listar(LoginRequiredMixin, generic.ListView):
         contexto['titulo'] = 'Lista de productos'
         contexto['buscar'] = 'Ingresa el nombre de alǵun producto'
         contexto['cantidad'] = Producto.objects.all().aggregate(Sum('stock')).get('stock__sum')
-        contexto['categorias'] = Categoria.objects.all()
+        # contexto['categorias'] = Categoria.objects.all()
         return contexto
 
 
