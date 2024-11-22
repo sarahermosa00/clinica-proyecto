@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% load custom_filters %}
+
+{% block content %}
+
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Título -->
+        <h2 class="mb-0">{{ saldo_diario.fecha }} - Movimientos de Caja Chica</h2>
+    
+        <!-- Formulario para filtrar por fecha -->
+        <form method="get" class="d-flex align-items-center">
+                <label for="fecha" class="form-label mb-0 me-2">Fecha</label>
+                <input type="date" name="fecha" id="fecha" class="form-control ml-2 mr-2" value="{{ fecha_actual }}">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </form>
+    </div>
+
+
+
+    <!-- Saldo inicial y final -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4>Saldo Inicial: <span class="badge bg-success">{{ saldo_diario.saldo_inicial|formato_guaranies }}</span></h4>
+            <h4>Saldo Final: <span class="badge bg-primary">{{ saldo_diario.saldo_final|formato_guaranies }}</span></h4>
+        </div>
+
+        <div class="d-flex">
+            <!-- <a type="button" class="btn btn-warning text-dark btn-sm mr-2" href="{% url 'caja_chica:crear_saldo' %}">
+                <i class="fa fa-cash-register"></i>
+                Registrar Nuevo Saldo Diario
+            </a> -->
+
+            <!-- Botón para abrir el modal de Registrar Movimiento -->
+                <button type="button" class="btn btn-warning mr-2 " data-toggle="modal" data-target="#registrarMovimientoModal">
+                    <i class="fa fa-exchange-alt"></i>
+                                Registrar Movimiento
+                </button>
+
+                <a href="{% url 'caja_chica:exportar_pdf' %}" class="btn btn-success">
+                    <i class="fa fa-file-pdf"></i> Descargar PDF
+                </a>
+
+        </div>
+
+    </div>
+
+    <!-- Tabla de movimientos -->
+    <table class="table">
+        <thead class="table-info">
+            <!-- Primera fila del encabezado -->
+            <tr>
+                <th rowspan="2">Fecha</th>
+                <th rowspan="2">Concepto</th>
+                <th colspan="2" class="text-center">Montos</th>
+            </tr>
+            <!-- Segunda fila del encabezado -->
+            <tr>
+                <th class="text-center">Entrada</th>
+                <th class="text-center">Salida</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for movimiento in movimientos %}
+                <tr>
+                    <td>{{ movimiento.fecha}}</td>
+                    <td>{{ movimiento.concepto }}</td>
+                    <td class="text-center">
+                        {% if movimiento.tipo == 'entrada' %}
+                            {{ movimiento.monto|formato_guaranies }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        {% if movimiento.tipo == 'salida' %}
+                            {{ movimiento.monto|formato_guaranies }}
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center">No hay movimientos registrados para hoy.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr class="table-secondary">
+                <th colspan="2" class="text-end">Totales:</th>
+                <th class="text-center">
+                    {{ movimientos|sum_entrada|formato_guaranies }}
+                </th>
+                <th class="text-center">
+                    {{ movimientos|sum_salida|formato_guaranies }}
+                </th>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Formulario para registrar movimiento -->
+    <!-- <div class="mt-4">
+        <h3>Registrar Movimiento</h3>
+        <form method="post" class="p-3 border rounded">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success">Registrar</button>
+        </form>
+    </div> -->
+
+
+    <!-- Modal para registrar movimiento -->
+    <div class="modal fade" id="registrarMovimientoModal" tabindex="-1" aria-labelledby="registrarMovimientoModalLabel" aria-hidden="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="registrarMovimientoModalLabel">Registrar Movimiento</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-warning">Registrar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const movimientoModal = document.getElementById('registrarMovimientoModal');
+        const fechaInput = movimientoModal.querySelector('input[name="fecha"]');
+        
+        movimientoModal.addEventListener('show.bs.modal', function() {
+            const today = new Date().toISOString().split('T')[0];
+            fechaInput.value = today;
+            fechaInput.readOnly = true;
+        });
+    });
+</script>
+
+{% endblock %}
+
