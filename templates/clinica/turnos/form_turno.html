@@ -36,8 +36,8 @@
                     <!--  Fecha -->
                     <div class="col-md-4">
                         <div class="my-3">
-                            <label class="form-label">{{form.fecha.label|upper}}</label>
-                            {{form.fecha|add_class:'form-control rounded-pill'}}
+                            <label class="form-label">{{form.fecha_hora.label|upper}}</label>
+                            {{form.fecha_hora|add_class:'form-control rounded-pill'}}
                         </div>
                     </div>
                     
@@ -49,7 +49,26 @@
                                 {{form.asistencia|attr:"type:date"|add_class:'form-control rounded-pill'}}
                             </div>
                         </div>
+                        
                     {% endif %}
+
+
+
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <ul>
+                            {% for error in form.errors.values %}
+                                <li>{{ error|escape }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                     {% endif %}
+                
+
+
+
+
                 </div>
 
                 <div class="d-flex justify-content-center my-3">
@@ -69,6 +88,25 @@
                 </div>
             </div>
         </form>
+
+
+        <!-- este seria un script para que el input de fecha y hora se vea mas amigable, usamos la libreria flatpickr, que es liviana y no necesita de jquery -->
+
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script>
+                flatpickr("input[type=datetime-local]", {
+                    enableTime: true,
+                    dateFormat: "Y-m-d H:i",
+                    minDate: "today"
+                });
+        </script>
+
+
+
+
+
+
     {% else %}
         <div class="row d-flex justify-content-center">
             <div class="col-8">

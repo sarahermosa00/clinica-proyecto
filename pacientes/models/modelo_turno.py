@@ -43,12 +43,22 @@ class Turno(ModeloBase):
         null=True
     )
     
-    fecha = models.DateField(verbose_name="Día", default=timezone.now)
+    # se quiere poner la hora tambien para evitar poner dos turnos en el mismo horario
+
+    fecha_hora = models.DateTimeField(verbose_name="Fecha y hora", default=timezone.now)
 
     class Meta:
         db_table = "turno"
         verbose_name = "Turno"
         verbose_name_plural = "Turnos"
+
+
+
+
     
     def __str__(self):
-        return f"{self.paciente.nombre} {self.paciente.apellido}, {self.fecha}"
+        return f"{self.paciente.nombre} {self.paciente.apellido}, {self.fecha_hora}"
+
+
+
+
