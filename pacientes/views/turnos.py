@@ -33,7 +33,7 @@ class Listar(LoginRequiredMixin, generic.ListView):
         contexto = super().get_context_data(**kwargs)
         contexto['titulo'] = 'Lista de turnos'
         contexto['buscar'] = 'Ingresa el nombre de alǵun paciente o una fecha'
-        contexto['hoy'] = Turno.objects.filter(fecha=timezone.now()).filter(asistencia='P')
+        contexto['hoy'] = Turno.objects.filter(fecha_hora=timezone.now()).filter(asistencia='P')
         return contexto
 
 
@@ -47,18 +47,26 @@ class Agregar(LoginRequiredMixin, generic.CreateView):
     success_url = reverse_lazy('pacientes:lista_turnos')
 
 
+
+
     def form_valid(self, form):
-        registrarActividad(
-            self.request,
-            'Cargó un turno'
-        )
-        messages.success(
-            self.request,
-            'Turno cargado!'
-        )
+        registrarActividad(self.request, 'Cargó un turno')
+        messages.success(self.request, "Turno agendado correctamente.")
+        return super().form_valid(form)
+
+
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'No se pudo agendar el turno. Verifica los datos ingresados.')
+        return super().form_invalid(form)
+    
+
+  
+
+    def form_valid(self, form):
         form.instance.asistencia = Turno.ASISTIO_OPCIONES[0][0]  # P - PENDIENTE
-        if not form.instance.fecha:
-            form.instance.fecha = timezone.now()
+        if not form.instance.fecha_hora:
+            form.instance.fecha_hora = timezone.now()
         return super().form_valid(form)
  
     def get_context_data(self, **kwargs):
@@ -66,6 +74,10 @@ class Agregar(LoginRequiredMixin, generic.CreateView):
         contexto['titulo'] = 'Registrar un nuevo turno'
         contexto['volver'] = self.success_url
         return contexto
+
+
+
+
 
 
 class Editar(LoginRequiredMixin, generic.UpdateView):
@@ -130,7 +142,7 @@ class TurnosCalendarioView(View):
         for turno in turnos:
             eventos.append({
                 'title': turno.paciente.nombre,  # Título del evento 
-                'start': turno.fecha.isoformat(),  # Fecha de inicio del evento en formato ISO
+                'start': turno.fecha_hora.isoformat(),  # Fecha de inicio del evento en formato ISO
                 'medico': turno.paciente.medico.nombre,
             })
 

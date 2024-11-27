@@ -64,7 +64,7 @@
         {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
         <li class="nav-item my-2">
           <a class="nav-link" href="{% url 'factura:pantalla_proveedor' %}">
-            PROVEEDORES
+            CLIENTES
           </a>
         </li>
         {% endif %}
@@ -72,7 +72,7 @@
         {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
         <li class="nav-item my-2">
           <a class="nav-link" href="{% url 'factura:pantalla_objetos' %}">
-            OBJETOS
+            PRODUCTOS
           </a>
         </li>
         {% endif %}
@@ -84,14 +84,6 @@
           </a>
         </li>
         {% endif %}
-
-          {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
-          <li class="nav-item my-2">
-            <a class="nav-link" href="{% url 'salarios:pantalla_salarios' %}">
-              SALARIOS
-            </a>
-          </li>
-          {% endif %}
 
           {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
           <li class="nav-item my-2">
@@ -129,6 +121,7 @@
                 <!-- Reporte de Pacientes accesible para Gerencia, Secretaria y Médico -->
                 {% if user|sector:"Gerencia" or user|sector:"Secretaria" or user|sector:"Medico" %}
                   <li><a class="dropdown-item" href="{% url 'reportes:pacientes' %}">Pacientes</a></li>
+                  <li><a class="dropdown-item" href="{% url 'reportes:tiempos' %}">Tiempos</a></li>
                 {% endif %}
 
                 <!-- Reportes de Salarios y Caja Chica accesibles para Gerencia y Administración -->
