@@ -14,6 +14,13 @@ from productos.models import Pedido
 from usuarios.models import Usuario
 from .models import Filtro
 
+from django.views.generic import ListView
+from pacientes.models.modelo_duracion import TiempoAgendamiento
+from django.db.models import Avg, Sum
+
+
+
+
 # Formularios
 from .forms import FiltroPacientes, FiltroMes
 
@@ -245,3 +252,25 @@ def descargarPDF(peticion):
             pdf = generar_reporte_pdf(ListaPacientes.template_name, contexto)
         return HttpResponse(pdf, content_type='application/pdf')
     return HttpResponseRedirect(reverse_lazy('reportes:pacientes'))
+
+
+
+
+
+
+
+class ReporteTiemposAgendamiento(generic.ListView):
+    template_name = 'clinica/reportes/tiempos_agendamiento.html'
+    context_object_name = 'tiempos'
+
+    def get_queryset(self):
+        return TiempoAgendamiento.objects.all()
+
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        tiempos = TiempoAgendamiento.objects.all()
+        contexto['promedio'] = tiempos.aggregate(Avg('duracion_agendamiento'))['duracion_agendamiento__avg']
+        contexto['total'] = tiempos.aggregate(Sum('duracion_agendamiento'))['duracion_agendamiento__sum']
+        return contexto
+
+

@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h1>Reporte de Tiempos de Agendamiento de turnos</h1>
+
+<p><strong>Promedio de Tiempo:</strong> {{ promedio|floatformat:2 }} segundos</p>
+<p><strong>Tiempo Total:</strong> {{ total|floatformat:2 }} segundos</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Duración (segundos)</th>
+          
+        
+        </tr>
+    </thead>
+    <tbody>
+        {% for tiempo in tiempos %}
+        <tr>
+            <td>{{ tiempo.fecha_agendamiento }}</td>
+            <td>{{ tiempo.duracion_agendamiento}}</td>
+         
+  
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4">No hay registros de tiempo.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+
+
+

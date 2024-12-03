@@ -61,8 +61,10 @@
                             <thead>
                                 <tr class="text-center">
                                     <th>Paciente</th>
-                                    <th>Fecha</th>
+                                    <th>Fecha y hora</th>
+                                    <th>Medico</th>
                                     <th>Asistencia</th>
+                                    
                                     <th></th>
                                 </tr>
                             </thead>
@@ -71,11 +73,15 @@
                                     <tr class="text-center">
                                         <td>{{turno.paciente}}</td>
                                         <td>           
-                                            {{turno.fecha}}
+                                            {{turno.fecha_hora|date:"d/m/Y H:i"}}
+                                        </td>
+                                        <td>
+                                            {{turno.medico}}
                                         </td>
                                         <td>
                                             {{turno.get_asistencia_display}}
                                         </td>
+                                        
                                         <td>
                                             <a class="btn btn-sm d-flex align-self-center" 
                                             href="{% url 'pacientes:editar_turno' turno.id %}">

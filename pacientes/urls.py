@@ -3,7 +3,7 @@ from django.urls import path
 
 # Vistas
 
-from .views import pacientes, observaciones, turnos
+from .views import pacientes, observaciones, turnos, reporte
 from .views.turnos import TurnosCalendarioView
 
 app_name = 'pacientes'
@@ -14,6 +14,7 @@ URLS_PACIENTES = [
     path('detalle/<uuid:pk>', pacientes.Detalle.as_view(), name='detalle'),
     path('editar/<uuid:pk>', pacientes.Editar.as_view(), name='editar'),
     path('eliminar/<uuid:pk>', pacientes.Eliminar.as_view(), name='eliminar'),
+   
 ]
 
 URL_OBSERVACIONES = [

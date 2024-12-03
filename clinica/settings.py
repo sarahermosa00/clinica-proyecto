@@ -31,8 +31,8 @@ SECRET_KEY = 'l#@pu_m^4tle$5kl)khq54cl#ntc8n_b&)**kqd65d44%e!=h)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','clinica-proyecto-production.up.railway.app']
-CSRF_TRUSTED_ORIGINS = ['http://*', 'https://clinica-proyecto-production.up.railway.app']
+ALLOWED_HOSTS = ['18.222.3.214', 'localhost', '127.0.0.1']
+# CSRF_TRUSTED_ORIGINS = ['http://*', 'https://clinica-proyecto-production.up.railway.app']
 
 
 # Application definition
@@ -48,7 +48,8 @@ LOCAL_APPS = [
     'usuarios.apps.UsuariosConfig',
     'caja_chica.apps.CajaChicaConfig',
     'compartido',
-    'reportes'
+    'reportes',
+    'factura'
 ]
 
 DEV_APPS = [
@@ -109,14 +110,14 @@ WSGI_APPLICATION = 'clinica.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'clinica',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': 'clinica',
+       'USER': 'postgres',
+       'PASSWORD': '1234',
+       'HOST': 'localhost',
        'PORT': '5432',
     }
-    #'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+    # 'default': dj_database_url.config(default=os.getenv('DATABASE_URL'
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -185,3 +186,9 @@ LOGIN_URL = '/usuarios/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/usuarios/'
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+
+
+# -------------------------------------------
+# Añadido el default autofield porque no reconoce bien los id
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

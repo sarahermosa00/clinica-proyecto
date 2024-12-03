@@ -3,13 +3,11 @@
 <nav
   class="navbar navbar-expand-lg fixed-top navbar-light bg-light" aria-label="Main navigation">
   <div class="container-fluid">
+
+    <!--href="{% url 'compartido:inicio' %}"-->
     
     <a class="navbar-brand">
-      <!-- <img src="{% static 'favicon/favicon-32x32.png' %}" alt="Logo"> -->
-      <!-- <img class="mr-3" src="{% static 'img/logo.svg' %}" alt="doctor" width="70" height="70"> -->
-
-      <img class="ml-3" src="{% static 'img/clinic-2.svg' %}" alt="logo" width="45" height="45">
-
+      <img src="{% static 'favicon/favicon-32x32.png' %}" alt="Logo">
     </a>
     
     <button class="navbar-toggler p-0 border-1" type="button" data-toggle="offcanvas" aria-label="Toggle navigation">
@@ -53,13 +51,39 @@
           </li>
           {% endif %}
 
-          {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
-          <li class="nav-item my-2">
-            <a class="nav-link" href="{% url 'salarios:pantalla_salarios' %}">
-              SALARIOS
-            </a>
-          </li>
-          {% endif %}
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+        <li class="nav-item my-2">
+          <a class="nav-link" href="{% url 'salarios:pantalla_salarios' %}">
+            SALARIOS
+          </a>
+        </li>
+        {% endif %}
+        
+<!-- ----------------------añadidos--------------------------- -->
+
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+        <li class="nav-item my-2">
+          <a class="nav-link" href="{% url 'factura:pantalla_proveedor' %}">
+            CLIENTES
+          </a>
+        </li>
+        {% endif %}
+
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+        <li class="nav-item my-2">
+          <a class="nav-link" href="{% url 'factura:pantalla_objetos' %}">
+            PRODUCTOS
+          </a>
+        </li>
+        {% endif %}
+
+        {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
+        <li class="nav-item my-2">
+          <a class="nav-link" href="{% url 'factura:pantalla_factura' %}">
+            FACTURA
+          </a>
+        </li>
+        {% endif %}
 
           {% if user|sector:"Gerencia" or user|sector:"Administracion" %}
           <li class="nav-item my-2">
@@ -97,6 +121,7 @@
                 <!-- Reporte de Pacientes accesible para Gerencia, Secretaria y Médico -->
                 {% if user|sector:"Gerencia" or user|sector:"Secretaria" or user|sector:"Medico" %}
                   <li><a class="dropdown-item" href="{% url 'reportes:pacientes' %}">Pacientes</a></li>
+                  <li><a class="dropdown-item" href="{% url 'reportes:tiempos' %}">Tiempos</a></li>
                 {% endif %}
 
                 <!-- Reportes de Salarios y Caja Chica accesibles para Gerencia y Administración -->

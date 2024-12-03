@@ -1,0 +1,198 @@
+{% extends 'layout.html' %}
+{% load usuarios_tags %}
+{% load widget_tweaks %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+{% if user|sector:"Administracion" or user|sector:"Gerencia" %}
+<form method="post" enctype="multipart/form-data" id="Formulario">
+    {% csrf_token %}
+    <div class="container py-3">
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <h1>Agregar Factura</h1>
+        <form method="post" class="form">
+            {% csrf_token %}
+            {{ form.as_p }}
+        </form>
+
+        
+        <div class="border-top mt-3 p-3">
+            <div class="row">
+                <div class="col-sm-3" id="contenedor-producto">
+                    Producto
+                </div>
+                <div class="col-sm-3" id="contenedor-precio">
+                    Precio
+                </div>
+                <div class="col-sm-3" id="contenedor-cantidad">
+                    Cantidad
+                </div>
+                <div class="col-sm-3" id="contenedor-acciones">
+                    Acciones
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+
+        {{detalle_factura_formset.management_form}}
+        <div class="border-top mt-3 p-3" id="detalle-contenedor-formset">
+            {% for detallefactura in detalle_factura_formset %}
+                    {{detallefactura.id}}
+                    <div class="row my-3" id="contenedor-productoobjeto">
+                        <div class="col-sm-3">
+                            {{detallefactura.objeto}}
+                        </div>
+                        <div class="col-sm-3" id="contenedor-precioobjeto">
+                            {{detallefactura.precio}}
+                        </div>
+                        <div class="col-sm-3" id="contenedor-cantidadobjeto">
+                            {{detallefactura.cantidad}}
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-danger eliminar-usuario" id="contenedor-accionesobjetos">Eliminar</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary btn-sm" id="agregar-objeto">Agregar Producto</button>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example">
+                <a href="{% url 'factura:pantalla_factura' %}" type="button" class="btn btn-outline-primary">
+                    <i class="fas fa-angle-double-left text-info"></i> Volver
+                </a>
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="fas fa-check text-info"></i> Guardar
+                </button>
+            </div>
+        </div>
+
+        <!-- <div class="row d-flex justify-content-center">
+            <div class="col-8">
+                <h1 class="text-center my-5 lead">No tienes permiso para cargar o modificar empleados</h1>
+            </div>
+        </div> -->
+    </div>
+
+
+   
+
+    <script>
+        const agregar = document.getElementById("agregar-objeto");
+        const agregarform = document.getElementById("detalle-contenedor-formset");
+        // Para que este script funcione y mande los cambios al back end, hay que tomar los datos ocultos que genera el form set, los cuales se obtienen inspeccionando el codigo fuente. Lo que se obtiene es el total de formularios que se crean y se le va incrementando con cada evento de añadir una fila mas. 
+        
+        // <input id="id_detallefactura_set-TOTAL_FORMS" type="hidden" name="detallefactura_set-TOTAL_FORMS" value="7">
+
+        // Este es el hiden que nos devuelve, mas abajo se usa para los elemetos.name y .id para identificar cada uno y poder ir cargando dinamicamente
+
+        const totalForms = document.getElementById("id_detallefactura_set-TOTAL_FORMS");
+
+        
+        const opcionesProducto = document.querySelector("#id_detallefactura_set-0-objeto").innerHTML;
+
+
+        // añadimos una funcion que escucha una accion(evento) del cliente, en este caso el click en el boton agregar
+        agregar.addEventListener("click", () => {
+            const currentFormCount = parseInt(totalForms.value);
+
+            // Crear la nueva fila
+            const agregarcontenido = document.createElement("div");
+            agregarcontenido.classList.add("row", "my-3");
+
+            // Crear el campo de Producto
+            // para todos los demas campos se repite lo mismo
+            const divproducto = document.createElement("div");
+            divproducto.classList.add("col-sm-3");
+            const ingresarproducto = document.createElement("select");
+            ingresarproducto.name = `detallefactura_set-${currentFormCount}-objeto`;
+            ingresarproducto.id = `id_detallefactura_set-${currentFormCount}-objeto`;
+            ingresarproducto.classList.add("form-control");
+            // Hace referencia a la variable opcionesProducto que es el select que se encuentra en el formset, se le asigna el innerHTML para que se pueda ver en el select
+            ingresarproducto.innerHTML = opcionesProducto; 
+            divproducto.appendChild(ingresarproducto);
+
+            // Crear el campo de Precio
+            const divprecio = document.createElement("div");
+            divprecio.classList.add("col-sm-3");
+            const ingresarprecio = document.createElement("input");
+            ingresarprecio.type = "number";
+            ingresarprecio.name = `detallefactura_set-${currentFormCount}-precio`;
+            ingresarprecio.id = `id_detallefactura_set-${currentFormCount}-precio`;
+            ingresarprecio.classList.add("form-control");
+            divprecio.appendChild(ingresarprecio);
+
+            // Crear el campo de Cantidad
+            const divcantidad = document.createElement("div");
+            divcantidad.classList.add("col-sm-3");
+            const ingresarcantidad = document.createElement("input");
+            ingresarcantidad.type = "number";
+            ingresarcantidad.name = `detallefactura_set-${currentFormCount}-cantidad`;
+            ingresarcantidad.id = `id_detallefactura_set-${currentFormCount}-cantidad`;
+            ingresarcantidad.classList.add("form-control");
+            divcantidad.appendChild(ingresarcantidad);
+
+            // Crear el botón Eliminar
+            const contenedorAcciones = document.createElement("div");
+            contenedorAcciones.classList.add("col-sm-3");
+            const eliminar = document.createElement("button");
+            eliminar.type = "button";
+            eliminar.classList.add("btn", "btn-danger");
+            eliminar.textContent = "Eliminar";
+            contenedorAcciones.appendChild(eliminar);
+
+
+            // Al detectar el click se llama la funcion para sacar el contenido
+            eliminar.addEventListener("click", () => {
+                agregarcontenido.remove();
+            });
+
+            // Agregar los campos a la nueva fila
+            // dentro de la funcion en si misma se crea un contenedor para tener los nuevos datos, a este mismo es a quien hay que agregarle los campos que se crean
+            agregarcontenido.appendChild(divproducto);
+            agregarcontenido.appendChild(divprecio);
+            agregarcontenido.appendChild(divcantidad);
+            agregarcontenido.appendChild(contenedorAcciones);
+
+            //Al formulario en si se le debe añadir el contenido que se crea
+            agregarform.appendChild(agregarcontenido);
+
+            // Incrementar el total de formularios para que el back end entienda que se añadio x cantidad de filas mas
+            totalForms.value = currentFormCount + 1;
+        });
+
+        
+    </script>
+  
+        
+
+  
+
+{% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
