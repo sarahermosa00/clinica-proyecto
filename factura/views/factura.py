@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+# from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views import generic
@@ -20,6 +21,9 @@ from ..forms import FormularioFactura, DetalleFactura, DetalleFacturaFormSet, Fo
 
 class PantallaFactura(LoginRequiredMixin, generic.TemplateView):
     template_name = 'clinica/factura/pantalla_factura.html'
+    context_object_name = 'Facturas'
+    paginate_by = 5
+
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
@@ -49,7 +53,8 @@ class AgregarFactura(LoginRequiredMixin, generic.CreateView):
     """Añade una nueva factura"""
     model = Factura
     form_class = FormularioFactura
-    template_name = 'clinica/factura/form_create_factura.html'  
+    template_name = 'clinica/factura/form_create_factura.html' 
+    paginate_by = 5
 
 
     def get_success_url(self):
@@ -116,6 +121,7 @@ class DetallaFactura(LoginRequiredMixin, generic.DetailView):
     model = Factura
     template_name = "clinica/factura/detalle_factura.html"
     context_object_name = "factura"
+    paginate_by = 5
 
 
     def dispatch(self, request, *args, **kwargs):

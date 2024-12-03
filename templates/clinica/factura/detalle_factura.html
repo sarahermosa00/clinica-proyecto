@@ -10,67 +10,44 @@
         <div class="row d-flex justify-content-center">
             <div class="col-sm-10">
                 <div class="my-3 p-3 bg-white rounded shadow-lg" id="factura">
-                    <h5 class="badge rounded-pill pb-2 pt-2 bg-success align-items-center text-dark fs-6">
-                        <strong>Detalle de Facturas</strong>
-                    </h5>
-
-                    <!-- Información de la factura -->
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            Información de la Factura
-                        </div>
-                        <div class="card-body">
-                            <p><strong>Fecha de Emisión:</strong> {{ factura.fecha_emision }}</p>
-                            <p><strong>Cliente:</strong> {{ factura.cliente_proveedor }}</p>
-                            <p><strong>Timbrado:</strong> {{ factura.timbrado }}</p>
-                            <p><strong>Inicio de Validez:</strong> {{ factura.inicio_validez_timbrado }}</p>
-                            <p><strong>Fin de Validez:</strong> {{ factura.fin_validez_timbrado }}</p>
-                            <p><strong>Estado:</strong> {{ factura.get_estado_factura_opciones_display }}</p>
-                        </div>
+                    <!-- Información del cliente -->
+                    <div class="mb-4">
+                        <h2>Cliente: {{ factura.cliente_proveedor }}</h2>
                     </div>
 
-                    <!-- Detalles de la factura -->
-                    <h2>Productos de la Factura</h2>
-                    <table class="table table-bordered">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th>Numero factura</th>
-                                <th>Codigo - Producto</th>
-                                <th>Precio Unitario</th>
-                                <th>Cantidad</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for detalle in detalle_factura %}
+                    <!-- Detalles de los productos -->
+                    <div>
+                        <h3>Productos</h3>
+                        <table class="table">
+                            <thead>
                                 <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{ detalle.objeto }}</td>
-                                    <td>${{ detalle.precio }}</td>
-                                    <td>{{ detalle.cantidad }}</td>
-                                    <td>${{ detalle.precio|floatformat:2|add:detalle.cantidad|floatformat:2 }}</td>
+                                    <th>Producto</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Cantidad</th> 
                                 </tr>
-                            {% empty %}
-                                <tr>
-                                    <td colspan="5">No hay productos asociados a esta factura.</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th colspan="4" class="text-end">Subtotal:</th>
-                                <td>GS{{ subtotal|floatformat:2 }}</td>
-                            </tr>
-                            <tr>
-                                <th colspan="4" class="text-end">IVA (10%):</th>
-                                <td>GS{{ iva|floatformat:2 }}</td>
-                            </tr>
-                            <tr>
-                                <th colspan="4" class="text-end">Total con IVA:</th>
-                                <td>GS{{ total_con_iva|floatformat:2 }}</td>
-                            </tr>
-                        </tfoot>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for detalle in detalle_factura %}
+                                    <tr>
+                                        <td>{{ detalle.objeto }}</td>
+                                        <td>GS {{ detalle.precio|floatformat:2 }}</td>
+                                        <td>{{ detalle.cantidad }}</td> 
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4">No hay productos asociados a esta factura.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Totales -->
+                    <div class="mt-4">
+                        <p><strong>Subtotal:</strong> GS {{ subtotal|floatformat:2 }}</p>
+                        <p><strong>IVA (10%):</strong> GS {{ iva|floatformat:2 }}</p>
+                        <p><strong>Total con IVA:</strong> GS {{ total_con_iva|floatformat:2 }}</p>
+                    </div>
                 </div>
 
                 <!-- Botones de acción -->
@@ -80,7 +57,7 @@
                         <a href="{% url 'factura:pantalla_factura' %}" type="button" class="btn btn-outline-primary">
                             <i class="fas fa-angle-double-left text-info"></i> Volver
                         </a>
-                        <!-- Botón de imprimir -->
+                         <!-- Botón de imprimir -->
                         <!-- Se usa el evento on click con la funcion de crear un pantalla para imprimir -->
                         <button class="btn btn-primary" onclick="window.print();">
                             <i class="fas fa-print"></i> Imprimir Factura
@@ -90,15 +67,24 @@
             </div>
         </div>
         
-
-        <!-- ----------------------------JS---------------------------- -->
-        <!-- Usamos el boton de imprimir con ayuda de js creamos un pop up en el navegador para imprimir la factura -->
+    
+        <!-- Usamos el boton de imprimir para crear un pop up en el navegador para imprimir la factura -->
         <style>
             @media print {
-                
+                /* hiden, box-shadow none y border none para que no se vean los elementos esteticos de la pagina */
                 body * {
                     visibility: hidden;
                 }
+                
+                .shadow-lg {
+                    box-shadow: none !important;
+                }
+
+                .card {
+                    border: none !important;
+                }
+
+                /* traer los elementos  */
                 #factura, #factura * {
                     visibility: visible;
                 }
@@ -107,9 +93,20 @@
                     top: 0;
                     left: 0;
                     width: 100%;
+                    margin: 0;
+                    padding: 0;
+                }
+
+
+                body {
+                    font-size: 12px;
+                }
+                html, body {
+                    height: 100%;
                 }
             }
         </style>
+
 
     {% else %}
         <div class="row d-flex justify-content-center">
@@ -117,5 +114,6 @@
                 <h1 class="text-center my-5 lead">No tienes permiso para cargar turnos</h1>
             </div>
         </div>
-    {% endif %}
+        {% endif %}
+
 {% endblock %}

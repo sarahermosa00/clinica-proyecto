@@ -40,7 +40,7 @@
                         <table class="table table-hover table-borderless">
                             <thead>
                                 <tr>
-                                    <th>Nro</th>
+                                    <!-- <th>Nro</th> -->
                                     <th>Cliente</th>
                                    
                                     <th>Acciones</th>
@@ -50,7 +50,7 @@
                             <tbody>
                                 {% for factura in facturas %}
                                 <tr>
-                                    <td>{{ forloop.counter }}</td>  <!-- Muestra el número de iteración -->
+                                    <!-- <td>{{ forloop.counter }}</td>  Muestra el número de iteración -->
                                     <td>{{ factura.cliente_proveedor }}</td>
                                     
 
@@ -67,14 +67,14 @@
                             </tbody>
                         </table>
                     </div>
-                    
+                </div>
+                {% include 'componentes/paginacion.html' %}
+                </div>
+            
                 {% else %}
                     <h1 class="text-center my-3 lead">No hay facturas a mostrar</h1>
                 {% endif %}
             </div>
-            <!-- Incluye el componente de paginación si es necesario -->
-            {% include 'componentes/paginacion.html' %}
-        </div>
     </div>
 {% else %}
     <div class="row d-flex justify-content-center">
@@ -85,5 +85,6 @@
 
 
     {% endif %}
+
 
 {% endblock %}
