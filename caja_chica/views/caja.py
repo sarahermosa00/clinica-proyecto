@@ -3,6 +3,9 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 from django.utils import timezone
+from decimal import Decimal
+from compartido.templatetags.custom_filters import formato_guaranies
+
 
 #Models
 from ..models import MovimientoCajaChica, SaldoDiarioCajaChica
@@ -36,8 +39,7 @@ class ListaMovimientosCajaChica(LoginRequiredMixin, generic.ListView):
         else:
             fecha = timezone.localtime().date()
 
-        # Filtrar los movimientos por la fecha seleccionada
-        movimientos = MovimientoCajaChica.objects.filter(fecha=fecha)
+        # Crear o recuperar el saldo diario para la fecha seleccionada
         saldo_diario, creado = SaldoDiarioCajaChica.objects.get_or_create(fecha=fecha)
         
         # Calcular saldo inicial del día si es el primer registro
@@ -46,14 +48,18 @@ class ListaMovimientosCajaChica(LoginRequiredMixin, generic.ListView):
             saldo_diario.saldo_inicial = saldo_anterior.saldo_final if saldo_anterior else 0
             saldo_diario.save()
 
+        # Filtrar los movimientos por la fecha seleccionada
+        movimientos = MovimientoCajaChica.objects.filter(fecha=fecha)
+
         # Calcular el saldo final después de actualizar o agregar movimientos
         saldo_diario.calcular_saldo_final()
 
         context = {
             'movimientos': movimientos,
             'saldo_diario': saldo_diario,
-            'form': MovimientoCajaChicaForm(),
-            'fecha': fecha,  # Pasar la fecha seleccionada al contexto para mostrar en el formulario
+            'form': MovimientoCajaChicaForm() if not saldo_diario.cerrado else None,  # Solo permite registros si no está cerrada
+            'fecha': fecha,  # Pasar la fecha seleccionada al contexto para mostrar en el formulario,
+            'caja_cerrada': saldo_diario.cerrado,  # Indica si la caja está cerrada
         }
         return render(request, self.template_name, context)
 
@@ -81,107 +87,186 @@ class CrearSaldoDiario(LoginRequiredMixin, generic.CreateView):
             return redirect('caja_chica:lista_movimientos')
         return render(request, self.template_name, {'form': form})
 
-# Generar XLSX   
-# def exportar_pago_xlsx(request, pk):
-#     # Obtener el pago de salario por su ID
-#     pago = PagoSalario.objects.get(pk=pk)
-#     empleados_salarios = []
-#     for empleado in pago.empleados.all():
-#         salario_total = empleado.salario_base + empleado.bonificaciones - empleado.deducciones
-#         empleados_salarios.append({
-#             'empleado': empleado,
-#             'salario_total': salario_total
-#         })
-    
-#     # Crear archivo Excel
-#     wb = Workbook()
-#     ws = wb.active
-#     ws.title = "Hoja1"
-    
-#     bold_font = Font(bold=True) 
 
-#     # Formatear encabezados con celdas combinadas
-#     # Título general en las celdas B1 a E1
-#     ws.merge_cells('A1:G2')
-#     ws['A1'] = "PLANILLA DE PAGOS DE SALARIO"
-#     ws["A1"].font = bold_font   
-#     ws['A1'].alignment = Alignment(horizontal="center", vertical="center")
-    
-#     empresa = "Fundacion Años Dorados"
+class CerrarCaja(LoginRequiredMixin, generic.View):
+    template_name = 'clinica/caja/cerrar_caja.html'
 
-#     # Empresa en las celdas B2 a E3
-#     ws.merge_cells('A3:G3')
-#     ws['A3'] = "Empresa: " + empresa
-#     ws["A3"].font = bold_font
-#     ws['A3'].alignment = Alignment(horizontal="center", vertical="center")
+    def get(self, request):
+        fecha = timezone.localtime().date()
+        saldo_diario = SaldoDiarioCajaChica.objects.filter(fecha=fecha).first()
+        if not saldo_diario:
+            messages.error(request, "No hay saldo registrado para el día actual.")
+            return redirect('caja_chica:lista_movimientos')
+        if saldo_diario.cerrado:
+            messages.warning(request, "La caja ya ha sido cerrada para el día de hoy.")
+            return redirect('caja_chica:lista_movimientos')
 
-#     # Datos generales
-#     fecha_actual = datetime.now().strftime("%Y-%m-%d")
-#     mes_anho = datetime.now().strftime("%b%y")  # Ejemplo: Oct24
-#     numero = f"{mes_anho}"
-    
-#     # Encabezado general
-#     ws["A5"] = "Número:"
-#     ws["A5"].font = bold_font
-#     ws["B5"] = "Fecha de acreditación:"
-#     ws["B5"].font = bold_font
-#     ws["C5"] = "Tipo de Liquidacion:"
-#     ws["C5"].font = bold_font
-#     ws["D5"] = "Nota:"
-#     ws["D5"].font = bold_font
-#     ws["E5"] = "Total:"
-#     ws["E5"].font = bold_font
-#     ws["F5"] = "Moneda"
-#     ws["F5"].font = bold_font
-#     ws["G5"] = "Cuenta Débito"
-#     ws["G5"].font = bold_font
+        context = {
+            'saldo_diario': saldo_diario,
+        }
+        return render(request, self.template_name, context)
 
-#     # Datos en fila 6
-#     ws["A6"] = numero
-#     ws["B6"] = fecha_actual
-#     ws["C6"] = "Salario"
-#     ws["D6"] = ""  # Nota vacía
+    def post(self, request):
+        fecha = timezone.localtime().date()
+        saldo_diario = SaldoDiarioCajaChica.objects.filter(fecha=fecha).first()
+        if not saldo_diario:
+            messages.error(request, "No hay saldo registrado para el día actual.")
+            return redirect('caja_chica:lista_movimientos')
 
-#     total_salarios = sum([emp['salario_total'] for emp in empleados_salarios])
-    
-#     ws["E6"] = total_salarios
-#     ws["F6"] = "PYG"
-#     ws["G6"] = ""  # Cuenta Débito vacía
-    
-#     # Encabezados de la lista de empleados
-#     ws["A7"] = "Tipo Documento"
-#     ws["A7"].font = bold_font
-#     ws["B7"] = "Nro. Documento"
-#     ws["B7"].font = bold_font
-#     ws["C7"] = "Nombre"
-#     ws["C7"].font = bold_font
-#     ws["D7"] = "Monto"
-#     ws["D7"].font = bold_font
-#     ws["E7"] = "Cuenta"
-#     ws["E7"].font = bold_font
+        if saldo_diario.cerrado:
+            messages.warning(request, "La caja ya ha sido cerrada para el día de hoy.")
+            return redirect('caja_chica:lista_movimientos')
 
-#     # Llenar la lista de empleados
-#     row = 8
-#     for empleado in empleados_salarios:
-#         ws[f"A{row}"] = "CI"  # Tipo de documento
-#         ws[f"B{row}"] = empleado['empleado'].documento
-#         ws[f"C{row}"] = empleado['empleado'].nombre
-#         ws[f"D{row}"] = empleado['salario_total']
-#         ws[f"E{row}"] = empleado['empleado'].cuenta_bancaria
-#         row += 1
+        # Obtener el saldo físico ingresado por el usuario
+        saldo_fisico = request.POST.get('saldo_fisico')
+        try:
+            saldo_fisico = float(saldo_fisico)
+        except ValueError:
+            messages.error(request, "Por favor, ingresa un monto válido.")
+            return redirect('caja_chica:cerrar_caja')
 
-#     # Ajustar tamaño de las columnas
-#     for col in range(2, 7):
-#         ws.column_dimensions[get_column_letter(col)].width = 20
+        # Cerrar la caja
+        saldo_diario.cerrar_caja(saldo_fisico)
 
-#     # Preparar la respuesta HTTP con el archivo Excel
-#     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-#     response['Content-Disposition'] = f'attachment; filename="pago_salarios_{pago.id}.xlsx"'
-    
-#     # Guardar el archivo en la respuesta
-#     wb.save(response)
-    
-#     return response
+        # Si hay diferencia, ajustar el saldo inicial del día siguiente
+        if saldo_diario.diferencia != 0:
+            fecha_siguiente = fecha + timezone.timedelta(days=1)
+            saldo_siguiente, _ = SaldoDiarioCajaChica.objects.get_or_create(fecha=fecha_siguiente)
+            saldo_siguiente.saldo_inicial += saldo_diario.diferencia
+            saldo_siguiente.save()
+
+        messages.success(request, "La caja ha sido cerrada correctamente.")
+        return redirect('caja_chica:lista_movimientos')
+
+# def gestionar_caja(request):
+#     if request.method == "POST":
+#         fecha = timezone.localtime().date()
+#         saldo_diario = SaldoDiarioCajaChica.objects.filter(fecha=fecha).first()
+
+#         if not saldo_diario:
+#             messages.error(request, "No hay saldo diario registrado para el día actual.")
+#             return redirect('caja_chica:lista_movimientos')
+
+#         # Si la caja está cerrada, permitir abrirla
+#         # if saldo_diario.cerrado:
+#         #     saldo_diario.abrir_caja()
+#         #     messages.success(request, "Caja abierta correctamente.")
+#         # else:
+#         #     # Cerrar la caja y manejar la diferencia
+#         #     saldo_fisico = request.POST.get('saldo_fisico')
+#         #     try:
+#         #         saldo_fisico = Decimal(saldo_fisico)
+#         #     except (TypeError, ValueError):
+#         #         messages.error(request, "Saldo físico no válido.")
+#         #         return redirect('caja_chica:lista_movimientos')
+
+#         #     saldo_diario.cerrar_caja(saldo_fisico)
+
+#         #     # Notificar al usuario sobre la diferencia
+#         #     if saldo_diario.diferencia != 0:
+#         #         messages.warning(
+#         #             request, 
+#         #             f"Caja cerrada con una diferencia."
+#         #             "El saldo inicial del día siguiente ha sido ajustado."
+#         #         )
+#         #     else:
+#         #         messages.success(request, "Caja cerrada correctamente.")
+#         if saldo_diario.cerrado:
+#             # Reabrir la caja y ajustar el saldo si se proporciona un nuevo saldo físico
+#             nuevo_saldo_fisico = request.POST.get('saldo_fisico')
+#             if nuevo_saldo_fisico:
+#                 saldo_diario.abrir_caja(nuevo_saldo_fisico)
+#                 nuevo_saldo_fisico_formateado = formato_guaranies(nuevo_saldo_fisico)
+#                 messages.success(
+#                     request,
+#                     f"Caja reabierta y ajustada con un saldo físico de {nuevo_saldo_fisico_formateado}."
+#                 )
+#             else:
+#                 saldo_diario.abrir_caja()
+#                 messages.success(request, "Caja reabierta correctamente.")
+
+#         else:
+#             # Cerrar la caja
+#             saldo_fisico = request.POST.get('saldo_fisico')
+#             try:
+#                 saldo_fisico = Decimal(saldo_fisico)
+#             except (TypeError, ValueError):
+#                 messages.error(request, "Saldo físico no válido.")
+#                 return redirect('caja_chica:lista_movimientos')
+
+#             saldo_diario.cerrar_caja(saldo_fisico)
+#             # Notificar al usuario sobre la diferencia
+#             if saldo_diario.diferencia != 0:
+#                 messages.warning(
+#                     request, 
+#                     f"Caja cerrada con una diferencia."
+#                 )
+#             else:
+#                 messages.success(request, "Caja cerrada correctamente.")
+
+#     return redirect('caja_chica:lista_movimientos')
+
+def gestionar_caja(request):
+    if request.method == "POST":
+        fecha = timezone.localtime().date()
+        saldo_diario = SaldoDiarioCajaChica.objects.filter(fecha=fecha).first()
+
+        if not saldo_diario:
+            messages.error(request, "No hay saldo diario registrado para el día actual.")
+            return redirect('caja_chica:lista_movimientos')
+
+        if saldo_diario.cerrado:
+            # Reabrir la caja
+            nuevo_saldo_fisico = request.POST.get('saldo_fisico')
+            if nuevo_saldo_fisico:
+                try:
+                    nuevo_saldo_fisico = Decimal(nuevo_saldo_fisico)
+                except (TypeError, ValueError):
+                    messages.error(request, "Saldo físico no válido.")
+                    return redirect('caja_chica:lista_movimientos')
+
+                saldo_diario.abrir_caja(nuevo_saldo_fisico)
+
+                # Actualizar saldo inicial del día siguiente
+                fecha_siguiente = fecha + timezone.timedelta(days=1)
+                saldo_siguiente, creado = SaldoDiarioCajaChica.objects.get_or_create(fecha=fecha_siguiente)
+                saldo_siguiente.saldo_inicial = saldo_diario.saldo_final
+                saldo_siguiente.save()
+
+                messages.success(
+                    request,
+                    f"Caja reabierta y ajustada con un saldo físico de {formato_guaranies(nuevo_saldo_fisico)}"
+                )
+            else:
+                saldo_diario.abrir_caja()
+                messages.success(request, "Caja reabierta correctamente.")
+        else:
+            # Cerrar la caja
+            saldo_fisico = request.POST.get('saldo_fisico')
+            try:
+                saldo_fisico = Decimal(saldo_fisico)
+            except (TypeError, ValueError):
+                messages.error(request, "Saldo físico no válido.")
+                return redirect('caja_chica:lista_movimientos')
+
+            saldo_diario.cerrar_caja(saldo_fisico)
+
+            # Actualizar saldo inicial del día siguiente
+            # fecha_siguiente = fecha + timezone.timedelta(days=1)
+            # saldo_siguiente, creado = SaldoDiarioCajaChica.objects.get_or_create(fecha=fecha_siguiente)
+            # saldo_siguiente.saldo_inicial = saldo_diario.saldo_final
+            # saldo_siguiente.save()
+
+            if saldo_diario.diferencia != 0:
+                messages.warning(
+                    request,
+                    f"Caja cerrada con una diferencia de {formato_guaranies(saldo_diario.diferencia)} "
+                    "El saldo inicial del día siguiente ha sido ajustado automáticamente."
+                )
+            else:
+                messages.success(request, "Caja cerrada correctamente.")
+
+    return redirect('caja_chica:lista_movimientos')
 
 
 def exportar_pdf(request):

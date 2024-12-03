@@ -16,6 +16,7 @@
                 <input type="date" name="fecha" id="fecha" class="form-control ml-2 mr-2" value="{{ fecha_actual }}">
             <button type="submit" class="btn btn-primary">Filtrar</button>
         </form>
+
     </div>
 
 
@@ -25,6 +26,7 @@
         <div>
             <h4>Saldo Inicial: <span class="badge bg-success">{{ saldo_diario.saldo_inicial|formato_guaranies }}</span></h4>
             <h4>Saldo Final: <span class="badge bg-primary">{{ saldo_diario.saldo_final|formato_guaranies }}</span></h4>
+
         </div>
 
         <div class="d-flex">
@@ -34,16 +36,45 @@
             </a> -->
 
             <!-- Botón para abrir el modal de Registrar Movimiento -->
-                <button type="button" class="btn btn-warning mr-2 " data-toggle="modal" data-target="#registrarMovimientoModal">
+                <!-- <button type="button" class="btn btn-warning mr-2 " data-toggle="modal" data-target="#registrarMovimientoModal">
                     <i class="fa fa-exchange-alt"></i>
                                 Registrar Movimiento
+                </button> -->
+
+            <!-- Botón de Registrar Movimiento (deshabilitado si la caja está cerrada) -->
+                <button type="button" class="btn btn-warning mr-2" data-toggle="modal" data-target="#registrarMovimientoModal" {% if caja_cerrada %}disabled{% endif %}>
+                    <i class="fa fa-exchange-alt"></i> Registrar Movimiento
                 </button>
 
-                <a href="{% url 'caja_chica:exportar_pdf' %}" class="btn btn-success">
+
+                <a href="{% url 'caja_chica:exportar_pdf' %}" class="btn btn-success mr-2">
                     <i class="fa fa-file-pdf"></i> Descargar PDF
                 </a>
 
+            <button type="button" class="btn {% if caja_cerrada %}btn-success{% else %}btn-danger{% endif %}" 
+                data-toggle="modal" 
+                data-target="#gestionarCajaModal">
+            <i class="fa {% if caja_cerrada %}fa-unlock{% else %}fa-lock{% endif %}"></i>
+                    {% if caja_cerrada %} Abrir Caja {% else %} Cerrar Caja {% endif %}
+            </button>
+
         </div>
+
+
+    </div>
+
+    <div class="justify-content-flex-end">
+        {% if caja_cerrada and saldo_diario.diferencia == 0  %}
+        <span class="text-danger ms-3"><strong>Caja cerrada, no se pueden registrar movimientos.</strong></span>
+        {% endif %}
+
+        {% if caja_cerrada and saldo_diario.diferencia != 0 %}
+        <div class="alert alert-warning">
+            Caja cerrada con una diferencia de <strong>{{ saldo_diario.diferencia|formato_guaranies }}</strong>.
+            El saldo inicial del día siguiente ha sido ajustado automáticamente.
+        </div>
+        {% endif %}
+    
 
     </div>
 
@@ -58,8 +89,8 @@
             </tr>
             <!-- Segunda fila del encabezado -->
             <tr>
-                <th class="text-center">Entrada</th>
-                <th class="text-center">Salida</th>
+                <th class="text-center">Ingresos</th>
+                <th class="text-center">Egresos</th>
             </tr>
         </thead>
         <tbody>
@@ -131,6 +162,59 @@
         </div>
     </div>
 
+     <!-- Modal para Cerrar Caja
+     <div class="modal fade" id="cerrarCajaModal" tabindex="-1" aria-labelledby="cerrarCajaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cerrarCajaModalLabel">Cerrar Caja</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'caja_chica:cerrar_caja' %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="saldo_fisico">Saldo Físico</label>
+                            <input type="number" step="0.01" class="form-control" id="saldo_fisico" name="saldo_fisico" placeholder="Ingrese el saldo físico actual" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger mt-3">Cerrar Caja</button>
+                    </form>
+                </div>
+            </div>
+        </div> -->
+        <!-- Modal para gestionar caja -->
+        <div class="modal fade" id="gestionarCajaModal" tabindex="-1" aria-labelledby="gestionarCajaModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="gestionarCajaModalLabel">
+                            {% if caja_cerrada %} Abrir Caja {% else %} Cerrar Caja {% endif %}
+                        </h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form method="post" action="{% url 'caja_chica:gestionar_caja' %}">
+                            {% csrf_token %}
+                                {% if not caja_cerrada %}
+                                <div class="form-group">
+                                    <label for="saldo_fisico" class="mb-2">Saldo Físico</label>
+                                    <input type="number" step="0.01" class="form-control mb-3" id="saldo_fisico" name="saldo_fisico" placeholder="Ingrese el saldo físico actual" {% if not caja_cerrada %}required{% endif %}>
+                                </div>
+                                {% else %}
+                                    <span class="ms-3"><strong>Se reabrira la caja con un saldo final de {{ saldo_diario.saldo_final|formato_guaranies }}</strong></span>
+                                {% endif %}
+                            <button type="submit" class="btn {% if caja_cerrada %}btn-success{% else %}btn-danger{% endif %} mt-4 mb-4">
+                                {% if caja_cerrada %} Abrir Caja {% else %} Cerrar Caja {% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
 </div>
 
 <script>
@@ -144,6 +228,16 @@
             fechaInput.readOnly = true;
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const cerrarCajaModal = document.getElementById('cerrarCajaModal');
+        const saldoFisicoInput = cerrarCajaModal.querySelector('#saldo_fisico');
+
+        cerrarCajaModal.addEventListener('show.bs.modal', function() {
+            saldoFisicoInput.value = "";  // Resetea el campo cada vez que se abre el modal
+        });
+    });
+
 </script>
 
 {% endblock %}
