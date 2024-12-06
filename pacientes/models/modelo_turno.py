@@ -7,6 +7,8 @@ from compartido.modelo_base import ModeloBase
 from . import Paciente
 from usuarios.models import Usuario
 
+from django.core.exceptions import ValidationError
+
 
 class Turno(ModeloBase):
     """
@@ -53,9 +55,24 @@ class Turno(ModeloBase):
         verbose_name_plural = "Turnos"
 
 
+    def clean(self):
+        # Validacion para que no se pueda crear turnos pasados a la fecha actual, pero esto solo afecta a la creacion ya que si va editar el estado no afecta.
+        if self.fecha_hora < timezone.localtime() and not self.pk:
+            raise ValidationError("No se puede agendar un turno en una fecha y hora pasada.")
+        
+        # Preguntamos si el objeto ya existe en la base de datos
+        if self.pk:
+            try:
+                original = Turno.objects.get(pk=self.pk)
+                if original.fecha_hora != self.fecha_hora and self.fecha_hora < timezone.localtime():
+                    raise ValidationError("No se puede modificar un turno a una fecha y hora pasada.")
+            except Turno.DoesNotExist:
+                # Si por alguna razón no se encuentra el objeto, ignorar esta validación
+                pass
 
+        super().clean()
 
-    
+        
     def __str__(self):
         return f"{self.paciente.nombre} {self.paciente.apellido}, {self.fecha_hora}"
 

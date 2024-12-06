@@ -85,11 +85,15 @@ class FormularioTurno(ModelForm):
 # Este widget sirve para que despues el javascript no tenga problemas para usar flatpickr
 
         widgets = {
-            'fecha_hora': forms.DateTimeInput(attrs={
-                'class': 'form-control datetimepicker-input',
-                'type': 'datetime-local'
-            }),
+            'fecha_hora': forms.DateTimeInput(
+                attrs={
+                    'class': 'form-control datetimepicker-input',
+                    'type': 'datetime-local',
+                },
+                format='%Y-%m-%dT%H:%M'  # Formato ISO para date-time inputs
+            ),
         }
+
 
     medico = forms.ModelChoiceField(
         queryset=Usuario.objects.filter(rol='M'),
@@ -99,24 +103,19 @@ class FormularioTurno(ModelForm):
         to_field_name='id',
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Prellenar el campo de fecha_hora con el valor inicial (fecha y hora local)
+        if self.instance.pk:
+            self.fields['fecha_hora'].initial = localtime(self.instance.fecha_hora).strftime('%Y-%m-%dT%H:%M')
+
+
     def clean(self):
         cleaned_data = super().clean()
         fecha_hora = cleaned_data.get('fecha_hora')
         medico = cleaned_data.get('medico')
+        paciente = cleaned_data.get('paciente')
 
-
-        # para que no se pueda poner una cita hacia el pasado
-        if fecha_hora and fecha_hora < timezone.now():
-            raise ValidationError("No se puede agendar un turno en una fecha y hora pasada.")
-
-        # para que no se pueda poner dos turnos en el mismo horario
-        rango_tiempo = timedelta(minutes=45)
-        conflictos = Turno.objects.filter(
-            medico=medico,
-            fecha_hora__range=(fecha_hora - rango_tiempo, fecha_hora + rango_tiempo)
-        )
-        if conflictos.exists():
-            raise ValidationError("Ya existe un turno agendado para el médico en un rango de 45 minutos.")
 
         return cleaned_data
     

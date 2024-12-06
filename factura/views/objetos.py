@@ -6,6 +6,7 @@ from django.db.models import Sum, Q
 from usuarios.models import registrarActividad
 from factura.models.modelo_objeto import ObjetoFactura
 from ..forms import FormularioObjeto
+from django.core.paginator import Paginator
 
 
 
@@ -15,14 +16,18 @@ from ..forms import FormularioObjeto
 
 class PantallaObjetos(LoginRequiredMixin, generic.TemplateView):
     template_name = 'clinica/factura/pantalla_objetos.html'
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
 
         objetos = ObjetoFactura.objects.all()
+        paginator = Paginator(objetos,self.paginate_by)
+        numero_pagina =  self.request.GET.get('page')
+        objeto_pagina = paginator.get_page(numero_pagina)   
+        contexto['buscar'] = 'Buscar productos por nombre'
+        contexto['objetos'] = objeto_pagina
 
-
-        contexto['objetos'] = objetos.order_by('-codigo_objeto')
 
         return contexto
     
@@ -34,6 +39,7 @@ class DetalleObjeto(LoginRequiredMixin, generic.DetailView):
     model = ObjetoFactura
     template_name = 'clinica/factura/detalle_objetos.html'
     context_object_name = 'objeto'
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
@@ -102,3 +108,33 @@ class EditarObjeto(LoginRequiredMixin, generic.UpdateView):
     
 
 #-----------------------Eliminar-------------------------
+
+
+class EliminarObjeto(LoginRequiredMixin, generic.DeleteView):
+    model = ObjetoFactura
+    template_name = 'componentes/delete.html'
+    paginate_by = 5
+
+
+    def get_success_url(self):
+        return reverse_lazy('factura:pantalla_objetos')
+    
+    def get_context_data(self):
+        registrarActividad(
+            self.request,
+            'Se elimino un producto'
+        )   
+        messages.success(
+            self.request,
+            'Producto eliminado'
+        )
+        return reverse_lazy('factura:pantalla_objetos')
+    
+    def get_context_data(self, **kwargs):
+        contexto = super().get_context_data(**kwargs)
+        contexto['titulo'] = f'Eliminar {self.object.nombre_objeto}'
+        contexto['url_volver'] = reverse_lazy('factura:pantalla_objetos')
+        return contexto
+    
+
+

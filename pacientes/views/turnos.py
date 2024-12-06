@@ -10,7 +10,11 @@ from calendar import HTMLCalendar
 from django.utils.safestring import mark_safe
 from django.shortcuts import render
 from django.http import JsonResponse
-
+from django.utils.timezone import localtime
+from django.urls import reverse_lazy
+from django.core.exceptions import ValidationError
+from pacientes.models import Paciente
+from django.db.models import Q
 
 # Modelos
 from ..models import Turno
@@ -29,11 +33,24 @@ class Listar(LoginRequiredMixin, generic.ListView):
     paginate_by = 5
     # page_kwarg
 
+
+    def get_queryset(self):
+        query = self.request.GET.get('query', None)  
+        if query:
+            return Turno.objects.filter(
+                Q(paciente__nombre__icontains=query) |  
+                Q(paciente__documento__icontains=query)  
+            ).distinct()
+        # Si no hay query, retorna todos los turnos
+        return Turno.objects.all()
+
+
     def get_context_data(self, **kwargs):
+
         contexto = super().get_context_data(**kwargs)
         contexto['titulo'] = 'Lista de turnos'
-        contexto['buscar'] = 'Ingresa el nombre de alǵun paciente o una fecha'
-        contexto['hoy'] = Turno.objects.filter(fecha_hora=timezone.now()).filter(asistencia='P')
+        contexto['buscar'] = 'Ingresa el nombre del paciente'
+        contexto['url_nuevo'] = reverse_lazy('pacientes:agregar_turno')
         return contexto
 
 
@@ -47,9 +64,14 @@ class Agregar(LoginRequiredMixin, generic.CreateView):
     success_url = reverse_lazy('pacientes:lista_turnos')
 
 
-
-
     def form_valid(self, form):
+        try:
+            form.instance.clean()
+        except ValidationError as e:
+            messages.error(self.request, e.message)
+            return self.form_invalid(form)
+
+        form.instance.asistencia = Turno.ASISTIO_OPCIONES[0][0]  # P - Pendiente
         registrarActividad(self.request, 'Cargó un turno')
         messages.success(self.request, "Turno agendado correctamente.")
         return super().form_valid(form)
@@ -63,12 +85,6 @@ class Agregar(LoginRequiredMixin, generic.CreateView):
 
   
 
-    def form_valid(self, form):
-        form.instance.asistencia = Turno.ASISTIO_OPCIONES[0][0]  # P - PENDIENTE
-        if not form.instance.fecha_hora:
-            form.instance.fecha_hora = timezone.now()
-        return super().form_valid(form)
- 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
         contexto['titulo'] = 'Registrar un nuevo turno'
@@ -83,6 +99,7 @@ class Agregar(LoginRequiredMixin, generic.CreateView):
 class Editar(LoginRequiredMixin, generic.UpdateView):
     """ 
     Modifica la información de una determinada observacion
+
     """
     model = Turno
     form_class = FormularioTurno
@@ -90,15 +107,21 @@ class Editar(LoginRequiredMixin, generic.UpdateView):
     success_url = reverse_lazy('pacientes:lista_turnos')
 
     def form_valid(self, form):
-        registrarActividad(
-            self.request,
-            'Modificó un turno'
-        )
-        messages.success(
-            self.request,
-            'Turno modificado!'
-        )
-        return super().form_valid(form)
+        # Valida si cambiamos el estado del turno
+        original_fecha_hora = self.object.fecha_hora
+        if 'asistencia' in form.changed_data and len(form.changed_data) == 1:
+            messages.success(self.request, "Estado del turno actualizado correctamente.")
+            registrarActividad(self.request, 'Modificó un turno')
+            return super().form_valid(form)
+
+        # Validar otros cambios (ej. fecha)
+        try:
+            form.instance.clean()
+        except ValidationError as e:
+            messages.error(self.request, e.message)
+            return self.form_invalid(form)
+
+        
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
@@ -141,8 +164,8 @@ class TurnosCalendarioView(View):
         eventos = []
         for turno in turnos:
             eventos.append({
-                'title': turno.paciente.nombre,  # Título del evento 
-                'start': turno.fecha_hora.isoformat(),  # Fecha de inicio del evento en formato ISO
+                'title': turno.paciente.nombre,  
+                'start': turno.fecha_hora.isoformat(),  
                 'medico': turno.paciente.medico.nombre,
             })
 

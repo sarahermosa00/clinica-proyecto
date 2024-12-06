@@ -10,10 +10,9 @@ URLS_CAJA_CHICA = [
     path('', caja.ListaMovimientosCajaChica.as_view(), name='lista_movimientos'),
     path('crear-saldo/', caja.CrearSaldoDiario.as_view(), name='crear_saldo'),
     path('exportar_pdf/', caja.exportar_pdf, name='exportar_pdf'),
+    path('cerrar_caja/', caja.CerrarCaja.as_view(), name='cerrar_caja'),
+    path('gestionar_caja/', caja.gestionar_caja, name='gestionar_caja'),
 
-    # path('detalle/<uuid:pk>', empleados.Detalle.as_view(), name='detalle_empleado'),
-    # path('editar/<uuid:pk>', empleados.Editar.as_view(), name='editar_empleado'),
-    # path('eliminar/<uuid:pk>', empleados.Eliminar.as_view(), name='eliminar_empleado'),
 ]
 
 

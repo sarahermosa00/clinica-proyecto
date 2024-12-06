@@ -3,6 +3,8 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views import generic
 from django.db.models import Sum, Q
+from django.core.paginator import Paginator
+
 
 from factura.models.modelo_proveedor import Proveedor
 from usuarios.models import registrarActividad
@@ -11,7 +13,9 @@ from ..forms import FormularioProveedor
 
 # ---------panalla principal de proveedores------------
 class PantallaProveedor(LoginRequiredMixin, generic.TemplateView):
+    # no funciona la paginacion porque el generic template view no lo gestiona
     template_name = 'clinica/factura/pantalla_proveedor.html'
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
@@ -22,8 +26,14 @@ class PantallaProveedor(LoginRequiredMixin, generic.TemplateView):
             proveedores = proveedores.filter(
                 Q(razon_social__icontains=query) |  
                 Q(ruc__icontains=query)            
-            )
-        contexto['proveedores'] = proveedores.order_by('-razon_social')
+            ).order_by('razon_social')  
+
+        paginator = Paginator(proveedores,self.paginate_by)
+        numero_pagina =  self.request.GET.get('page')
+        objeto_pagina = paginator.get_page(numero_pagina)       
+
+        contexto['buscar'] = 'Buscar clientes por RUC o razón social'
+        contexto['proveedores'] = objeto_pagina
         contexto['query'] = query  
 
         return contexto
@@ -70,6 +80,7 @@ class Agregar(LoginRequiredMixin, generic.CreateView):
     model = Proveedor
     form_class = FormularioProveedor
     template_name = 'clinica/factura/form_create.html'
+    paginate_by = 5
 
     def get_success_url(self):
         return reverse_lazy('factura:pantalla_proveedor')
@@ -87,6 +98,7 @@ class Editar(LoginRequiredMixin, generic.UpdateView):
     model = Proveedor
     form_class = FormularioProveedor
     template_name = 'clinica/factura/form_create.html'
+    paginate_by = 5
 
 
     # def get_success_url(self):
@@ -121,6 +133,7 @@ class Editar(LoginRequiredMixin, generic.UpdateView):
 class Eliminar(LoginRequiredMixin, generic.DeleteView):
     model = Proveedor
     template_name = 'componentes/delete.html'
+    paginate_by = 5
 
     # esta funcion retorna el template donde vos queres que se vaya si la eliminacion se hizo correctamente, en este caso en la pantalla de proveedores donde se muestra la lista de los proveedores que quedan
     

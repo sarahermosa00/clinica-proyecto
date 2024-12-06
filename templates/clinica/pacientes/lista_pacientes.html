@@ -8,8 +8,11 @@
     <!-- Formulario busqueda -->
     <form class="d-flex">
       <input class="form-control mr-2" autocomplete="off" type="nombre" placeholder="{{buscar}}" name="query">
-      <input class="form-control mr-2" type="date" name="fecha">
+      <!-- <input class="form-control mr-2" type="date" name="fecha"> -->
       <button class="btn btn-outline-success text-dark" type="submit">Buscar</button>
+      {% if request.GET.query %}
+                <a href="{{ request.path }}" class="btn btn-primary btn-sm">Mostrar todo</a>
+      {% endif %}
     </form>
     
     
@@ -25,14 +28,17 @@
                 {% endif %}
               </h6>
             </div>
-            <div class="col-6">
-                <div class="d-grid gap-2 col-6 mx-auto">
-                  <a type="buttom" class="btn btn-warning text-dark btn-sm" href="{% url 'pacientes:agregar' %}">
-                      <i class="fas fa-plus text-dark"></i>
-                      Agregar
-                  </a>
+            {% if  user|sector:"Secretaria" or user|sector:"Gerencia" %}
+              <div class="col-6">
+                  <div class="d-grid gap-2 col-6 mx-auto">
+                    <a type="buttom" class="btn btn-warning text-dark btn-sm" href="{% url 'pacientes:agregar' %}">
+                        <i class="fas fa-plus text-dark"></i>
+                        Agregar
+                    </a>
+                  </div>
               </div>
-            </div>
+            {% endif %}
+            
           </div>
           
           {% if Pacientes %}
@@ -40,28 +46,29 @@
               <table class="table table-hover table-borderless">
                 <thead>
                   <tr>
-                    <!--th>Foto</th>-->
+                    
                     <th>Paciente</th>
                     <th>Cedula de Identidad</th>
-                    <th></th>
-                    <th></th>
+                    <th>Fecha Cita</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
                   </tr>
                 </thead>
                 <tbody>
                   {% for paciente in Pacientes %}
                     <tr>
-                      <!--td>
-                        {% if paciente.imagen %}
-                          <img src="{{paciente.imagen.url}}" width="45" height="45" class="img-fluid rounded" alt="foto">
-                        {% else%}
-                          <img src="{% static 'img/default.svg' %}" width="45" height="45" class="img-fluid" alt="foto">
-                        {% endif %}
-                      </td>-->
                       <td>{{paciente.nombre}} {{paciente.apellido}}</td>
                       <td>{{paciente.documento}}</td>
                       <td>
+                        {% if paciente.ultima_cita %}
+                          {{ paciente.ultima_cita|date:"d/m/Y H:i" }}
+                        {% else %}
+                          Sin citas
+                        {% endif %}
+                      </td>
+                      <td>
                         <a href="{% url 'pacientes:detalle' paciente.id %}">
-                          <i class="fas fa-search text-dark"></i>
+                          <i class="fas fa-pencil-alt text-dark"></i>
                         </a>
                       </td>
                       <td>

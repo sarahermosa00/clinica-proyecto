@@ -11,8 +11,8 @@
                     <h5 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6"><strong> Detalle de Proveedores </strong></h6>
 
           
-                    <!-- Lista de todos los proveedores -->
-                    <h6 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6">Proveedores Asociados</h6>
+                    <!-- Lista de todos los proveedores - clientes - ambos -->
+                    <h6 class="badge rounded-pill pb-2 pt-2 pl-2 bg-success align-items-center text-dark fs-6">Clientes Asociados</h6>
                     {% if proveedor %}
 
                     <!-- esta parte es el titulo de la tabla -->
@@ -48,7 +48,7 @@
                             </table>
                         </div>
                     {% else %}
-                        <h1 class="text-center my-3 lead">No hay proveedores</h1>
+                        <h1 class="text-center my-3 lead">No hay clientes</h1>
                     {% endif %}
 
                     <!-- Botones de acción -->
@@ -79,7 +79,7 @@
     {% else %}
         <div class="row d-flex justify-content-center">
             <div class="col-8">
-                <h1 class="text-center my-5 lead">No tienes permiso para ver los detalles de los proveedores</h1>
+                <h1 class="text-center my-5 lead">No tienes permiso para ver los detalles de los clientes</h1>
             </div>
         </div>
     {% endif %}

@@ -17,15 +17,15 @@
                 {% include 'componentes/forms_errors.html' %}
 
                 <div class="row d-flex justify-content-center m-3">
-                    <!-- Nombre de la categoria -->
+                    <!-- Nombre de la categoria que vas a añadir-->
                     <div class="col-md-6">
                         <div class="my-3">
-                            <label class="form-label">Nombre del Departamento</label>
-                            {{form.nombre|attr:"autocomplete:off"|attr:"autofocus:on"|add_class:'form-control rounded-pill'}}
+                            <label class="form-label">Añadir Departamento</label>
+                            {{form.nombre|attr:"autocomplete:off"|attr:"autofocus:on"|attr:"placeholder:Ingrese el nombre del departamento a añadir"|add_class:'form-control rounded-pill'}}
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="row">
                     <div class="d-flex justify-content-center my-3">
                         <div class="btn-group shadow-sm" role="group" aria-label="Basic outlined example">
@@ -75,7 +75,7 @@
                                                     </td>
                                                     <td class="text-center">
                                                         <a href="{% url 'salarios:editar_categoria' categoria.id %}">
-                                                            <i class="fas fa-search text-dark"></i>
+                                                            <i class="fas fa-pencil-alt text-dark"></i>
                                                         </a>
                                                     </td>
                                                 </tr>

@@ -27,7 +27,7 @@
             </li>
           {% endif %}
 
-          {% if user|sector:"Secretaria" or user|sector:"Gerencia" or user|sector:"Medico" %}
+          {% if user|sector:"Secretaria" or user|sector:"Gerencia"%}
             <li class="nav-item my-2">
               <a class="nav-link" href="{% url 'pacientes:lista_turnos' %}">
                 TURNOS

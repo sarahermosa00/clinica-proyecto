@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-# from django.core.paginator import Paginator
+from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views import generic
@@ -10,11 +10,6 @@ from decimal import Decimal
 from factura.models.modelo_factura import Factura, DetalleFactura
 
 from ..forms import FormularioFactura, DetalleFactura, DetalleFacturaFormSet, FormularioDetalleFactura
-
-
-
-
-
 
 # ------vista de factura--------
 # para crear una nueva pantalla con los datos del modelo de factura
@@ -29,15 +24,21 @@ class PantallaFactura(LoginRequiredMixin, generic.TemplateView):
         contexto = super().get_context_data(**kwargs)
         query = self.request.GET.get('query', '')
         facturas = Factura.objects.all()
+        # para que la factura se ordene por fecha de mas reciente a mas antigua
+        facturas = Factura.objects.order_by('-fecha_emision')
         # para el filtro aca debo añadir cliente proveedor y la razon social porque estos campos son foraneos
-        contexto['facturas'] = facturas.order_by('cliente_proveedor__razon_social')
+        contexto['facturas'] = facturas.order_by('-fecha_emision')
         # el filtro para la busqueda
         if query:
             facturas = facturas.filter(
                 Q(cliente_proveedor__razon_social__icontains=query) 
-               
-            )
-        contexto['facturas'] =  facturas.order_by('cliente_proveedor__razon_social')
+ 
+            ).order_by('-fecha_emision')
+        paginator = Paginator(facturas,self.paginate_by)
+        numero_pagina =  self.request.GET.get('page')
+        objeto_pagina = paginator.get_page(numero_pagina)  
+        contexto['facturas'] =  objeto_pagina  
+        contexto['buscar'] = 'Buscar facturas por cliente'
         contexto['query'] = query
         return contexto
     
