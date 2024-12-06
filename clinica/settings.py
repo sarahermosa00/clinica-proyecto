@@ -15,6 +15,7 @@ from django.contrib.messages import constants as messages
 from dotenv import load_dotenv
 import os
 import dj_database_url 
+from django.conf.global_settings import DATE_INPUT_FORMATS
 
 load_dotenv()
 
@@ -148,6 +149,7 @@ Validaciones de la clave
 
 LANGUAGE_CODE = 'es-ar'
 
+
 TIME_ZONE = 'America/Asuncion'
 USE_I18N = True
 
@@ -192,3 +194,10 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 # -------------------------------------------
 # Añadido el default autofield porque no reconoce bien los id
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+DATE_INPUT_FORMATS = [
+    '%Y-%m-%d',  # Formato por defecto (YYYY-MM-DD)
+    '%d/%m/%Y',  # Formato europeo (DD/MM/YYYY)
+]

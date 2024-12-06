@@ -2,3 +2,8 @@
   <input class="form-control mr-2" autocomplete="off" type="search" placeholder="{{buscar}}" aria-label="Search" name="query">
   <button class="btn btn-outline-success text-dark" type="submit">Buscar</button>
 </form>
+<!-- Botón para mostrar toda la lista y volver a la pantalla principal -->
+{% if request.GET.query %}
+<!-- ese request path es para traer el path en el que estabamos sin ejecutar el query de busqueda y retorna ahi -->
+<a href="{{ request.path }}" class="btn btn-outline-success text-dark">Mostrar todo</a>
+{% endif %}

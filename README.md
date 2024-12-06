@@ -10,7 +10,7 @@
 
 
 1. ### Secretaría
-    > 📌 Puede agregar, modificar o eliminar los turnos de los Pacientes.
+    > 📌 Puede agregar, modificar o eliminar los turnos de los Pacientes y los datos de los mismos.
 
 
 2. ### Profesional médico
@@ -18,12 +18,6 @@
 
     > 📌 Solo puede ver los pacientes atendidos que se le fueron asignados.
 
-3. ### Gerencia
-
-    > 📌 Puede visualizar todos los datos y realizar los siguientes reportes 👇
-    1. Pacientes que asistieron a los turnos en la semana/mes.
-    2. Pacientes que no asistieron a los turnos en la semana/mes.  
-    3. Pacientes que hicieron por lo menos un Pedido en la semana/mes.
 
 ## Para iniciar el sistema
 

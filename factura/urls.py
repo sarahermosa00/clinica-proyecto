@@ -28,6 +28,7 @@ URLS_OBJETOS = [
     path('detalleobjeto/<uuid:pk>', objetos.DetalleObjeto.as_view(), name='detalle_objetos'),
     path('agregarobjeto/', objetos.AgregarObjeto.as_view(), name='agregar_objeto'),
     path('editar_objeto/<uuid:pk>', objetos.EditarObjeto.as_view(), name='editar_objeto'),
+    path('eliminar/<uuid:pk>', objetos.EliminarObjeto.as_view(), name='eliminar_objeto'),
     
 ]
 

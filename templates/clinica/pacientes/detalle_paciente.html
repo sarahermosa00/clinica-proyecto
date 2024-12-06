@@ -33,37 +33,42 @@
               <p>CI: {{Paciente.documento}}</p>
               <p>Edad: {{Paciente.edad}}</p>
             </div>
-            <div class="col-md-4 bg-warning bg-gradient shadow-sm">
-              <!-- Chincheta -->
-              <h3 class="text-center text-white py-3">
-                <img class="img-fluid" src="{% static 'img/cosito.svg' %}" alt="Cosito que apunta cosas" height="50" width="50">
-                Historial clínico 
-                {% if cantidad %}
-                <span class="badge bg-danger text-white rounded-pill align-text-top">
-                  {{cantidad}}
-                </span>
-                {% endif %}
-              </h3>
-              {% if user|sector:"Medico" or user|sector:"Gerencia" %}
-                {% if Historial %} 
 
-                  {% for observacion in Historial %}
-                    <p>
-                      <span class="font-weight-bolder">Motivo consulta: {{observacion.motivo_consulta}}</span>. 
-                      <!-- <div>
-                        Procedimientos: {{observacion.procedimientos}}
-                      </div> -->
-                    </p>
-                    <hr />
-                  {% endfor %} 
+            {% if user|sector:"Medico" or user|sector:"Gerencia" %}
+              <div class="col-md-4 bg-warning bg-gradient shadow-sm">
+                <!-- Chincheta -->
+                <h3 class="text-center text-white py-3">
+                  <img class="img-fluid" src="{% static 'img/cosito.svg' %}" alt="Cosito que apunta cosas" height="50" width="50">
+                  Historial clínico 
+                  {% if cantidad %}
+                  <span class="badge bg-danger text-white rounded-pill align-text-top">
+                    {{cantidad}}
+                  </span>
+                  {% endif %}
+                </h3>
+                {% if user|sector:"Medico" or user|sector:"Gerencia" %}
+                  {% if Historial %} 
+
+                    {% for observacion in Historial %}
+                      <p>
+                        <span class="font-weight-bolder">Motivo consulta: {{observacion.motivo_consulta}}</span>. 
+                        <!-- <div>
+                          Procedimientos: {{observacion.procedimientos}}
+                        </div> -->
+                      </p>
+                      <hr />
+                    {% endfor %} 
+             
 
                 {% else %}
                   <p class="text-center">No hay registros aún</p>
                 {% endif %}
-              {% else %}
-                    <p class="text-center">Solo su médico puede ver las observaciones</p>
-              {% endif %}
+                {% else %}
+                      <p class="text-center">Solo su médico puede ver las observaciones</p>
+                {% endif %}
             </div>
+         
+          {% endif %}
           </div>
         </div>
       </div>

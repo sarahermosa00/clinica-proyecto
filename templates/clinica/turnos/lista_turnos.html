@@ -4,38 +4,30 @@
 
 
 {% block content %}
-    {% if user|sector:"Medico" or user|sector:"Secretaria" or user|sector:"Gerencia"%}
-        {% include 'componentes/buscar_form.html' %}
+    {% if user|sector:"Secretaria" or user|sector:"Gerencia"%}
 
-        <div class="row">
-            <div class="col-sm-3">
-                <!-- Turnos del doctor -->
-                <div class="my-3 p-3 bg-warning bg-gradient rounded shadow-lg">
-                    <h3 class="text-center text-white py-3">
-                    <!-- Chincheta -->
-                    <img class="img-fluid" src="{% static 'img/cosito.svg' %}" alt="Cosito que apunta cosas" height="30" width="30">  
-                    Hoy
-                    {% if hoy %}
-                        <span class="d-sm-none d-md-inline badge rounded-pill align-text-bottom" style="background-color: #C5A46F52;">
-                            {{hoy.count}}
-                        </span>
-                    {% endif %}
-                    </h3>
-                    <!-- Pacientes para hoy que aún no fueron atentidos -->
-                    {% if hoy %}
-                        <ul class="list-group list-group-flush">
-                            {% for turno in hoy %}
-                                <li class="list-group-item bg-transparent">{{turno.paciente}}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p>No hay turnos pendientes para hoy</p>
-                    {% endif %}
-                    <!---->
-                </div>
-            </div>
+        <!-- Formulario búsqueda -->
+        <form method="get" class="d-flex align-items-center mb-3">
+         
+            <input 
+                type="text" 
+                name="query" 
+                class="form-control me-2"
+                placeholder="Buscar por nombre o cédula" 
+                value="{{ request.GET.query }}">
+            
+            
+            <button type="submit" class="btn btn-primary btn-sm me-2">Buscar</button>
+            
+           
+            {% if request.GET.query %}
+                <a href="{{ request.path }}" class="btn btn-primary btn-sm">Mostrar todo</a>
+            {% endif %}
+        </form>
+                
+       
 
-            <div class="col-sm-9">
+            <div class="col-sm-12">
                 <div class="table-responsive bg-white my-3 p-3 rounded shadow-lg">
                     <div class="row mb-2">
                         <div class="col-6">
@@ -64,8 +56,6 @@
                                     <th>Fecha y hora</th>
                                     <th>Medico</th>
                                     <th>Asistencia</th>
-                                    
-                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>

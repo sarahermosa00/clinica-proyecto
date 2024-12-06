@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.db.models import Max
 # Modelos
 from ..models import Paciente, Turno
 from usuarios.models import registrarActividad
@@ -24,50 +24,39 @@ class Listar(LoginRequiredMixin, generic.ListView):
     # page_kwarg
 
     def get_queryset(self):
+        # Obtener los parámetros de búsqueda
         b_query = self.request.GET.get('query')
         b_fecha = self.request.GET.get('fecha')
-        if self.request.user.rol == 'M':
-            if b_fecha:
-                data = []  # Pacientes que fueron atendidos esa fecha por ese doctor
-                turnos = Turno.objects.filter(fecha=b_fecha).filter(asistencia='A')
-                for turno in turnos:
-                    paciente = Paciente.objects.get(id=turno.paciente.id)
-                    if paciente.medico == self.request.user:
-                        data.append(paciente)
-                return data
-            if b_query:
-                return Paciente.objects.filter(
-                    # Busco ocurrencias...
-                    Q(nombre__in=b_query.split()) | Q(apellido__in=b_query.split()) |
-                    Q(nombre__icontains=b_query.split()[0])  |
-                    Q(apellido__icontains=b_query.split()[0])|
-                    Q(documento__contains=b_query)
-                ).filter(medico=self.request.user.id)
-            else:
-                return Paciente.objects.filter(medico=self.request.user.id)            
-        if b_fecha:
-            data = []  # Pacientes que fueron atendidos esa fecha
-            turnos = Turno.objects.filter(fecha=b_fecha).filter(asistencia='A')
-            for turno in turnos:
-                paciente = Paciente.objects.get(id=turno.paciente.id)
-                data.append(paciente)
-            if len(data)==0:
-                messages.error(
-                    self.request,
-                    f"Ningún paciente fue atendido el dia {b_fecha}"
-                )
-            return data
-        if b_query:
-            return Paciente.objects.filter(
-                # Busco ocurrencias...
-                Q(nombre__in=b_query.split()) | Q(apellido__in=b_query.split()) |
-                Q(nombre__icontains=b_query.split()[0])  |
-                Q(apellido__icontains=b_query.split()[0])|
-                Q(documento__contains=b_query)  
-            )
-        else:
-            return Paciente.objects.all()
 
+        # Iniciar el queryset con la anotación de la última cita
+        queryset = Paciente.objects.annotate(
+            ultima_cita=Max('turnos__fecha_hora')  # Obtiene la última fecha_hora de Turno asociada
+        )
+
+        # Filtrar por médico si el usuario es de rol "M"
+        if self.request.user.rol == 'M':
+            queryset = queryset.filter(medico=self.request.user.id)
+
+        # Filtrar por fecha, si se especifica
+        if b_fecha:
+            turnos = Turno.objects.filter(fecha_hora__date=b_fecha, asistencia='A')
+            pacientes_ids = turnos.values_list('paciente_id', flat=True)
+            queryset = queryset.filter(id__in=pacientes_ids)
+
+        # Filtrar por búsqueda (nombre, apellido o documento), si se especifica
+        if b_query:
+            queryset = queryset.filter(
+                Q(nombre__icontains=b_query) |
+                Q(apellido__icontains=b_query) |
+                Q(documento__icontains=b_query)
+            )
+
+        # Retornar el queryset final
+        return queryset
+
+        
+
+# ------------Contexto----------------
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
         contexto['titulo'] = 'Lista de pacientes'

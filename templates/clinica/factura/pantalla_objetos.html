@@ -1,81 +1,113 @@
+
 {% extends 'layout.html' %}
 {% load usuarios_tags %} 
+{% load custom_filters %}
+{% load static %} 
+
 {% load custom_filters %}
 
 {% block content %}
     {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
-    {% include 'componentes/buscar_form.html' %}
-
-    <h1>Objetos</h1>
-
-    
-    <!-- Encabezado de la sección -->
-    <div class="row d-flex justify-content-center">
-        <div class="col-sm-10">
-            <div class="my-3 p-3 bg-white rounded shadow-lg">
-                <div class="row">
-                    <div class="col-6">
-                        <h6 class="border-bottom pb-2 mb-0">
-                            Gestión de Objetos
-                            <span class="badge bg-warning rounded-pill align-text-bottom text-dark">{{objeto.count}}</span>
-                        </h6>
-                    </div>
-                    <div class="col-6">
-                        <div class="d-grid gap-2 col-6 mx-auto">
-                            <!-- Botón para generar un nuevo objeto -->
-                            <a type="button" class="btn btn-warning text-dark btn-sm" href="{% url 'factura:agregar_objeto' %}">
-                                <i class="fas fa-plus text-dark"></i>
-                                Generar Objetos
-                            </a>
+        {% include 'componentes/buscar_form.html' %}
+        <h1>Productos</h1>
+        <!-- Encabezado de la sección -->
+        <div class="row d-flex justify-content-center">
+            <div class="col-sm-10">
+                <div class="my-3 p-3 bg-white rounded shadow-lg">
+                    <div class="row">
+                        <div class="col-6">
+                            <h6 class="border-bottom pb-2 mb-0">
+                                Gestión de Productos
+                                <span class="badge bg-warning rounded-pill align-text-bottom text-dark">{{objeto.count}}</span>
+                            </h6>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-grid gap-2 col-6 mx-auto">
+                                <!-- Botón para generar un nuevo objeto -->
+                                <a type="button" class="btn btn-warning text-dark btn-sm" href="{% url 'factura:agregar_objeto' %}">
+                                    <i class="fas fa-plus text-dark"></i>
+                                    Generar Productos
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- objetos -->
-                {% if objetos %}
-                    <div class="table-responsive my-3">
-                        <table class="table table-hover table-borderless">
-                            <thead>
-                                <tr>
-                                    <th>Nro</th>
-                                    <th>Nombre del objeto</th>
-                                    <!-- <th>Codigo</th>
-                                    <th>Precio</th> -->
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for objeto in objetos %}
-                                <tr>
-                                    <td>{{ forloop.counter }}</td>  <!-- Muestra el número de iteración -->
-                                    <td>{{ objeto.nombre_objeto }}</td>
-                                    <!-- <td>{{ objeto.codigo_objeto }}</td>
-                                    <td>{{ objeto.precio_objeto }}</td> -->
-                                    
-                                    <td>
-                                        <a href="{% url 'factura:detalle_objetos' objeto.id%}" class="btn btn-primary btn-sm">Ver Detalle</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <h1 class="text-center my-3 lead">No hay objetos registrados</h1>
-                {% endif %}
+                    <!-- Que objetos vamos a ver-->
+                            {% if objetos %}
+                                <div class="table-responsive my-3">
+                                    <table class="table table-hover table-borderless">
+                                        <thead>
+                                            <tr>
+                                                <th>Nro</th>
+                                                <th>Nombre del objeto</th>
+                                                <!-- <th>Codigo</th>
+                                                <th>Precio</th> -->
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for objeto in objetos %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>  <!-- Muestra el número de iteración -->
+                                                    <td>{{ objeto.nombre_objeto }}</td>
+                                                    <!-- <td>{{ objeto.codigo_objeto }}</td>
+                                                    <td>{{ objeto.precio_objeto }}</td> -->
+                                                    
+                                                    <td>
+                                                        <a href="{% url 'factura:detalle_objetos' objeto.id%}" class="btn btn-primary btn-sm">Ver Detalle</a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                            {% else %}
+                                <h1 class="text-center my-3 lead">No hay objetos registrados</h1>
+                            {% endif %}
+                        <!-- para la paginacion -->
+                        <div class="pagination">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    {% if objetos.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ objetos.previous_numero_pagina }}{% if query %}&query={{ query }}{% endif %}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                                    {% endif %}
+                        
+                                    {% for numero_pagina in objetos.paginator.page_range %}
+                                        {% if objetos.number == numero_pagina %}
+                                            <li class="page-item active"><span class="page-link">{{ numero_pagina }}</span></li>
+                                        {% else %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ numero_pagina }}{% if query %}&query={{ query }}{% endif %}">{{ numero_pagina }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                        
+                                    {% if objetos.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ objetos.next_page_number }}{% if query %}&query={{ query }}{% endif %}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                                            
+    {% else %}
+        <div class="row d-flex justify-content-center">
+            <div class="col-8">
+                <h1 class="text-center my-5 lead">No tienes permiso para ver los detalles de los proveedores</h1>
             </div>
-            <!-- Incluye el componente de paginación si es necesario -->
-            {% include 'componentes/paginacion.html' %}
         </div>
-    </div>
-{% else %}
-    <div class="row d-flex justify-content-center">
-        <div class="col-8">
-            <h1 class="text-center my-5 lead">No tienes permiso para ver los detalles de los objetos</h1>
-        </div>
-    </div>
-
-
     {% endif %}
 
 {% endblock %}

@@ -9,7 +9,7 @@
     {% if user|sector:"Administracion" or user|sector:"Gerencia" %}
         {% include 'componentes/buscar_form.html' %}
 
-    <h1>Proveedores</h1>
+    <h1>Clientes</h1>
 
     
     <!-- Encabezado de la sección -->
@@ -19,7 +19,7 @@
                 <div class="row">
                     <div class="col-6">
                         <h6 class="border-bottom pb-2 mb-0">
-                            Gestión de Proveedores
+                            Gestión de Clientes
                             <span class="badge bg-warning rounded-pill align-text-bottom text-dark">{{proveedores.count}}</span>
                         </h6>
                     </div>
@@ -28,7 +28,7 @@
                             <!-- Botón para generar uno nuevo  -->
                             <a type="button" class="btn btn-warning text-dark btn-sm" href="{% url 'factura:agregar_proveedor' %}">
                                 <i class="fas fa-plus text-dark"></i>
-                                Generar Proveedor
+                                Generar Cliente
                             </a>
                         </div>
                     </div>
@@ -66,6 +66,42 @@
                                 {% endfor %}    
                             </tbody>
                         </table>
+                    </div>
+                    <!-- para la paginacion -->
+                    <div class="pagination">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination">
+                                {% if proveedores.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ proveedores.previous_page_number }}{% if query %}&query={{ query }}{% endif %}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                                {% endif %}
+                    
+                                {% for page_num in proveedores.paginator.page_range %}
+                                    {% if proveedores.number == page_num %}
+                                        <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ page_num }}{% if query %}&query={{ query }}{% endif %}">{{ page_num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                    
+                                {% if proveedores.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ proveedores.next_page_number }}{% if query %}&query={{ query }}{% endif %}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
                     </div>
                     
                 {% else %}

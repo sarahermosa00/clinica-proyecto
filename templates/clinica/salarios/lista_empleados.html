@@ -37,6 +37,9 @@
                           <th>Nombre</th>
                           <th>Departamento</th>
                           <th>Salario Base</th>
+                          <th>Editar</th>
+                          <th>Eliminar</th>
+
                         </tr>
                       </thead>
                       <tbody>
@@ -48,7 +51,7 @@
                             <td>{{empleado.salario_base|formato_guaranies}}</td>
                             <td>
                               <a href="{% url 'salarios:detalle_empleado' empleado.id %}">
-                                <i class="fas fa-search text-dark"></i>
+                                <i class="fas fa-pencil-alt text-dark"></i>
                               </a>
                             </td>
                             <td>
