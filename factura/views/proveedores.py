@@ -13,20 +13,20 @@ from ..forms import FormularioProveedor
 
 # ---------panalla principal de proveedores------------
 class PantallaProveedor(LoginRequiredMixin, generic.TemplateView):
-    # no funciona la paginacion porque el generic template view no lo gestiona
+    # no funciona la paginacion porque el generic template view no lo gestiona, entonces se hace manualmente
     template_name = 'clinica/factura/pantalla_proveedor.html'
     paginate_by = 5
 
     def get_context_data(self, **kwargs):
         contexto = super().get_context_data(**kwargs)
         # para buscar hay que colocar obtener el query y de donde, en este caso la url, que como esta vacioo es ahi mismo donde buscamos
-        query = self.request.GET.get('query', '') 
+        # query = self.request.GET.get('query', '') 
         proveedores = Proveedor.objects.all()
-        if query:  
-            proveedores = proveedores.filter(
-                Q(razon_social__icontains=query) |  
-                Q(ruc__icontains=query)            
-            ).order_by('razon_social')  
+        # if query:  
+        #     proveedores = proveedores.filter(
+        #         Q(razon_social__icontains=query) |  
+        #         Q(ruc__icontains=query)            
+        #     ).order_by('razon_social')  
 
         paginator = Paginator(proveedores,self.paginate_by)
         numero_pagina =  self.request.GET.get('page')
@@ -34,7 +34,7 @@ class PantallaProveedor(LoginRequiredMixin, generic.TemplateView):
 
         contexto['buscar'] = 'Buscar clientes por RUC o razón social'
         contexto['proveedores'] = objeto_pagina
-        contexto['query'] = query  
+        # contexto['query'] = query  
 
         return contexto
 
